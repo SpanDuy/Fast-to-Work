@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Vacancy List</title>
+</head>
+<body>
+<span>
+        <a th:href="@{/logout}">Logout</a>
+        <a th:href="@{/job-vacancy/new}">Create Job Vacancy</a>
+    </span>
+<div th:each="jobVacancy, index :${jobVacancies}">
+  <div>
+    <a th:text="${jobVacancy.jobType}"></a>
+  </div>
+  <div>
+    <a th:text="${jobVacancy.salary}"></a>
+  </div>
+  <span>
+            <a th:href="@{/job-vacancy/{id}(id=${jobVacancy.id})}">View</a>
+            <a th:href="@{/job-vacancy/edit/{id}(id=${jobVacancy.id})}">Edit</a>
+            <a th:href="@{/job-vacancy/delete/{id}(id=${jobVacancy.id})}">Delete</a>
+        </span>
+</div>
+</body>
+</html>

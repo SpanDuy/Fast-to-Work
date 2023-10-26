@@ -29,7 +29,7 @@ public class ResumeController {
 
     @GetMapping("/Resume")
     public String getAllResume(Model model) {
-        List<Resume> resumes = resumeService.findAllResumes(1L);
+        List<Resume> resumes = resumeService.findAllResumes();
 
         model.addAttribute("resumes", resumes);
 
@@ -38,7 +38,7 @@ public class ResumeController {
 
     @GetMapping("/Resume/{id}")
     public String getResume(@PathVariable Long id, Model model) {
-        Resume resume = resumeService.findResumeById(1L, id);
+        Resume resume = resumeService.findResumeById(id);
 
         model.addAttribute("resume", resume);
         // model.addAttribute("skills", resume.getSkills());
@@ -61,6 +61,37 @@ public class ResumeController {
         }
 
         resumeService.createResume(resumeRequest, 1L);
+
+        return "redirect:/Resume";
+    }
+
+    @GetMapping("/Resume/edit/{id}")
+    public String editResumeForm(@PathVariable Long id,
+                                 Model model) {
+        Resume resume = resumeService.findResumeById(id);
+
+        ResumeRequest resumeRequest = ResumeRequest.builder()
+                .id(resume.getId())
+                .jobType(resume.getJobType())
+                .gitLink(resume.getGitLink())
+                .skills(resume.getSkills())
+                .build();
+
+        model.addAttribute("resume", resumeRequest); // Используем "resume" вместо "resumeRequest"
+        return "resume-edit";
+    }
+
+    @PostMapping("/Resume/edit/{id}")
+    public String editResume(@PathVariable Long id,
+                             @ModelAttribute("resume") ResumeRequest resumeRequest,
+                             BindingResult result,
+                             Model model) {
+        if(result.hasErrors()) {
+            model.addAttribute("resume", resumeRequest);
+            return "resume-edit";
+        }
+
+        resumeService.editResume(resumeRequest, id);
 
         return "redirect:/Resume";
     }

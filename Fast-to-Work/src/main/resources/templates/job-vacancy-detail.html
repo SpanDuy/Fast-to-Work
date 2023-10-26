@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Vacancy Detail</title>
+</head>
+<body>
+<a th:href="@{/job-vacancy}">Redirect</a>
+
+<p th:text="${jobVacancy.jobType}"></p>
+<p th:text="${jobVacancy.company}"></p>
+<p th:text="${jobVacancy.salary}"></p>
+<p th:text="${jobVacancy.description}"></p>
+<div th:each="skill : ${jobVacancy.skills}">
+    <div>
+        <span th:text="${skill.skill}"></span>
+    </div>
+</html>

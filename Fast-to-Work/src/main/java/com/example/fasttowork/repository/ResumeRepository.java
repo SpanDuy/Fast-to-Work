@@ -9,8 +9,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
-    List<Resume> findByUserId(Long userId);
-    // @Query("SELECT r FROM Resume r WHERE r.email = :email")
-    // List<Resume> findByEmail(String email);
-    // List<Resume> findByUser(UserEntity user);
+    List<Resume> findByEmployeeId(Long userId);
 }

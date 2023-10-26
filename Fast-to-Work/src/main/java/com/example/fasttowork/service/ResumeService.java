@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ResumeService {
-    List<Resume> findAllResumes(Long userId);
-    Resume findResumeById(Long userId, Long id);
+    List<Resume> findAllResumes();
+    Resume findResumeById(Long id);
     Resume createResume(ResumeRequest resumeRequest, Long userId);
+    void editResume(ResumeRequest resumeRequest, Long id);
     void deleteResume(Long userId, Long id);
 }

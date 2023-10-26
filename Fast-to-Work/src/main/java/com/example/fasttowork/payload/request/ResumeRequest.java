@@ -17,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ResumeRequest {
 
+    private Long id;
     private String jobType;
 //    private String name;
 //    private String surname;

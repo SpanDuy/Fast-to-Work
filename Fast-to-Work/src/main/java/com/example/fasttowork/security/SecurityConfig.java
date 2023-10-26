@@ -30,12 +30,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login", "/register", "/clubs", "/css/**", "/js/**")
+                .antMatchers("/register").not().fullyAuthenticated()
+                .antMatchers("/login", "/register", "/css/**", "/js/**")
                 .permitAll()
+//                .antMatchers("/Resume").hasAuthority("EMPLOYEE")
+//                .antMatchers("/job-vacancy").hasAuthority("EMPLOYER")
                 .and()
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/Resume")
+                        .defaultSuccessUrl("/")
                         .loginProcessingUrl("/login")
                         .failureUrl("/login?error=true")
                         .permitAll()

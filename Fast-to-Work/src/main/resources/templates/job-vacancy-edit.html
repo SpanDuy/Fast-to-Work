@@ -3,14 +3,14 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout}">
 <head>
-    <title>Resume Create</title>
+    <title>Job Vacancy Edit</title>
 </head>
 <body>
 <main>
-    <a th:href="@{/Resume}">Redirect</a>
+    <a th:href="@{/job-vacancy}">Redirect</a>
 
     <div>
-        <form role="form" method="post" th:action="@{/Resume/new}" th:object="${resume}">
+        <form role="form" method="post" th:action="@{/job-vacancy/edit/{id}(id=${jobVacancyRequest.id})}" th:object="${jobVacancyRequest}">
             <div>
                 <label for="jobType">Job Type</label>
                 <input
@@ -23,15 +23,26 @@
                 <p th:if="${#fields.hasErrors('jobType')}" class="text-danger" th:errors="*{jobType}"></p>
             </div>
             <div>
-                <label for="gitLink">Git Link</label>
+                <label for="salary">Salary</label>
                 <input
                         type="text"
                         class="form-control"
-                        id="gitLink"
-                        name="gitLink"
-                        th:field="*{gitLink}"
-                        placeholder="Git Link">
-                <p th:if="${#fields.hasErrors('gitLink')}" class="text-danger" th:errors="*{gitLink}"></p>
+                        id="salary"
+                        name="salary"
+                        th:field="*{salary}"
+                        placeholder="Salary">
+                <p th:if="${#fields.hasErrors('salary')}" class="text-danger" th:errors="*{salary}"></p>
+            </div>
+            <div>
+                <label for="description">Description</label>
+                <input
+                        type="text"
+                        class="form-control"
+                        id="description"
+                        name="description"
+                        th:field="*{description}"
+                        placeholder="Description">
+                <p th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></p>
             </div>
 
             <p>Skills</p>

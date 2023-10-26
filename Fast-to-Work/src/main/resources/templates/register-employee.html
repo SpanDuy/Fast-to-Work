@@ -1,0 +1,100 @@
+<html
+        xmlns:th="http://thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+<head>
+    <title>Register</title>
+</head>
+<section layout:fragment="body">
+    <style>
+        .main {
+            padding: 0px 10px;
+        }
+
+        @media screen and (max-width: 450px) {
+            .login-form{
+                margin-top: 10%;
+            }
+            .register-form{
+                margin-top: 10%;
+            }
+        }
+        @media screen and (min-width: 768px){
+            .main{
+                margin-left: 30%;
+            }
+
+            .sidenav{
+                width: 40%;
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                left: 0;
+            }
+        }
+    </style>
+    <div>
+        <div>
+            <div th:if="${param.fail}">
+                Username or email already exists</div>
+            <div>
+                <form method="post" role="form" th:action="@{/register/employee/save}" th:object="${employee}">
+                    <div>
+                        <label>Name</label>
+                        <input
+                                type="text"
+                                placeholder="Name"
+                                th:field="*{name}">
+                    </div>
+                    <div>
+                        <label>Surname</label>
+                        <input
+                                type="text"
+                                placeholder="Surname"
+                                th:field="*{surname}">
+                    </div>
+                    <div>
+                        <label>Middle Name</label>
+                        <input
+                                type="text"
+                                placeholder="Middle Name"
+                                th:field="*{middleName}">
+                    </div>
+                    <div>
+                        <label for="birthday">Birthday</label>
+                        <input
+                                type="date"
+                                class="form-control"
+                                id="birthday"
+                                th:field="*{birthday}">
+                        <p th:if="${#fields.hasErrors('birthday')}" class="text-danger" th:errors="*{birthday}"></p>
+                    </div>
+                    <div>
+                        <label>City</label>
+                        <input
+                                type="text"
+                                placeholder="City"
+                                th:field="*{city}">
+                    </div>
+                    <label for="gender">Gender</label>
+                    <select
+                            class="form-control"
+                            id="gender"
+                            th:field="*{gender}">
+                        <option value="true">Male</option>
+                        <option value="false">Female</option>
+                    </select>
+                    <div>
+                        <label>Phone Number</label>
+                        <input
+                                type="text"
+                                placeholder="Phone Number"
+                                th:field="*{phoneNumber}">
+                    </div>
+                    <button th:href="@{/register/employee}" type="submit">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</html>

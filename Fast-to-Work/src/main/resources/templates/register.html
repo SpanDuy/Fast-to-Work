@@ -62,61 +62,16 @@
                     placeholder="Password"
                     th:field="*{password}">
           </div>
-          <div>
-            <label>Name</label>
-            <input
-                    type="text"
-                    placeholder="Name"
-                    th:field="*{name}">
-          </div>
-          <div>
-            <label>Surname</label>
-            <input
-                    type="text"
-                    placeholder="Surname"
-                    th:field="*{surname}">
-          </div>
-          <div>
-            <label>Middle Name</label>
-            <input
-                    type="text"
-                    placeholder="Middle Name"
-                    th:field="*{middleName}">
-          </div>
-          <div>
-            <label for="birthday">Birthday</label>
-            <input
-                    type="date"
-                    class="form-control"
-                    id="birthday"
-                    th:field="*{birthday}">
-            <p th:if="${#fields.hasErrors('birthday')}" class="text-danger" th:errors="*{birthday}"></p>
-          </div>
-          <div>
-            <label>City</label>
-            <input
-                    type="text"
-                    placeholder="City"
-                    th:field="*{city}">
-          </div>
-          <label for="gender">Gender</label>
+          <p th:if="${#fields.hasErrors('password')}" ></p>
+          <label for="role">Role</label>
           <select
                   class="form-control"
-                  id="gender"
-                  th:field="*{gender}">
-            <option value="true">Male</option>
-            <option value="false">Female</option>
+                  id="role"
+                  th:field="*{role.name}">
+            <option value="EMPLOYER">EMPLOYER</option>
+            <option value="EMPLOYEE">EMPLOYEE</option>
           </select>
-          <div>
-            <label>Phone Number</label>
-            <input
-                    type="text"
-                    placeholder="Phone Number"
-                    th:field="*{phoneNumber}">
-          </div>
-          <p th:if="${#fields.hasErrors('password')}" ></p>
-          <button th:href="@{/login}" type="submit" >Login here.</button>
-          <button th:href="@{/register}" type="submit">Register</button>
+          <button th:href="@{/register}" type="submit">Continue Registration</button>
         </form>
       </div>
     </div>
