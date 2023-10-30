@@ -1,0 +1,25 @@
+@startuml Component Diagram
+
+package "Front-End" {
+  [Thymeleaf UI]
+}
+
+package "Spring MVC" {
+  [Resume Service]
+  [Job Vacancy Service]
+}
+
+package "Spring Security" {
+  [User Service]
+}
+
+database "PostgreSQL" as db
+
+[Thymeleaf UI] --> [User Service]
+[User Service] --> db
+[User Service] --> [Resume Service]
+[User Service] --> [Job Vacancy Service]
+[Resume Service] --> db
+[Job Vacancy Service] --> db
+
+@enduml

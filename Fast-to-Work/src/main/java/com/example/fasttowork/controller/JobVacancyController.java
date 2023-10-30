@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -29,8 +31,17 @@ public class JobVacancyController {
         this.skillConverter = skillConverter;
     }
 
-    @GetMapping("/job-vacancy")
+    @GetMapping("/job-vacancy/all")
     public String getAllJobVacancy(Model model) {
+        List<JobVacancy> jobVacancies = jobVacancyService.getAllJobVacancy();
+
+        model.addAttribute("jobVacancies", jobVacancies);
+
+        return "job-vacancy-all";
+    }
+
+    @GetMapping("/job-vacancy")
+    public String findAllJobVacancy(Model model) {
         List<JobVacancy> jobVacancies = jobVacancyService.findAllJobVacancy();
 
         model.addAttribute("jobVacancies", jobVacancies);
@@ -39,11 +50,12 @@ public class JobVacancyController {
     }
 
     @GetMapping("/job-vacancy/{id}")
-    public String getJobVacancy(@PathVariable Long id, Model model) {
+    public String getJobVacancy(@PathVariable Long id, Model model, HttpServletRequest request) {
         JobVacancy jobVacancy = jobVacancyService.findJobVacancyById(id);
+        String referrer = request.getHeader("Referer");
 
+        model.addAttribute("referrer", referrer);
         model.addAttribute("jobVacancy", jobVacancy);
-        // model.addAttribute("skills", resume.getSkills());
 
         return "job-vacancy-detail";
     }

@@ -1,0 +1,33 @@
+@startuml State Diagram
+
+[*] -[#Blue]-> Online : guest visits the site
+
+Online -[#Blue]-> Login : guest tries to login
+Online -[#Blue]-> View : guest views article
+Online -[#Blue]-> Register : guest tries to login
+
+Register -[#Red]-> Online : guest is not registered
+Register -[#Green]-> User : guest is registered as user
+
+Login -[#Red]-> Online : guest is not logged in
+Login -[#Green]-> User : guest is logged in as user
+
+User -[#Green]-> View : view resume/vacancy
+User -[#Green]-> Create : create resume/vacancy
+User -[#Green]-> Delete : delete resume/vacancy
+User -[#Green]-> Update : update resume/vacancy
+User -[#Green]-> Logout : logout from resume/vacancy
+
+View -[#Green]-> Leave : leave comment
+View -[#Green]-> Extract : extract comment
+
+Logout -[#Red]-> Online : online as guest
+
+View -[#Orange]-> [*]
+Create -[#Orange]-> [*]
+Update -[#Orange]-> [*]
+Delete -[#Orange]-> [*]
+Leave -[#Orange]-> [*]
+Extract -[#Orange]-> [*]
+
+@enduml

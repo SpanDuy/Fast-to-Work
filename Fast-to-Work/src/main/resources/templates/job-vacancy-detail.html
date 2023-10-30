@@ -8,14 +8,16 @@
     <title>Job Vacancy Detail</title>
 </head>
 <body>
-<a th:href="@{/job-vacancy}">Redirect</a>
+    <a th:href="@{${referrer}}">Redirect</a>
 
-<p th:text="${jobVacancy.jobType}"></p>
-<p th:text="${jobVacancy.company}"></p>
-<p th:text="${jobVacancy.salary}"></p>
-<p th:text="${jobVacancy.description}"></p>
-<div th:each="skill : ${jobVacancy.skills}">
-    <div>
-        <span th:text="${skill.skill}"></span>
+    <p th:text="${jobVacancy.jobType}"></p>
+    <p th:text="${jobVacancy.company}"></p>
+    <p th:text="${jobVacancy.salary}"></p>
+    <p th:text="${jobVacancy.description}"></p>
+    <div th:each="skill : ${jobVacancy.skills}">
+        <div>
+            <span th:text="${skill.skill}"></span>
+        </div>
     </div>
+</body>
 </html>

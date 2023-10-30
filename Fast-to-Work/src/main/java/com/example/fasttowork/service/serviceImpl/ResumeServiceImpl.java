@@ -24,6 +24,13 @@ public class ResumeServiceImpl implements ResumeService {
     private EmployeeRepository employeeRepository;
 
     @Override
+    public List<Resume> getAllResumes() {
+        List<Resume> resumes = resumeRepository.findAll();
+
+        return resumes;
+    }
+
+    @Override
     public List<Resume> findAllResumes() {
         String username = SecurityUtil.getSessionUser();
         UserEntity user = employeeRepository.findByEmail(username);

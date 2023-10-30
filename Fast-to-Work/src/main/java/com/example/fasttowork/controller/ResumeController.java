@@ -27,8 +27,17 @@ public class ResumeController {
         this.skillConverter = skillConverter;
     }
 
-    @GetMapping("/Resume")
+    @GetMapping("/Resume/all")
     public String getAllResume(Model model) {
+        List<Resume> resumes = resumeService.getAllResumes();
+
+        model.addAttribute("resumes", resumes);
+
+        return "resume-all";
+    }
+
+    @GetMapping("/Resume")
+    public String findAllResume(Model model) {
         List<Resume> resumes = resumeService.findAllResumes();
 
         model.addAttribute("resumes", resumes);

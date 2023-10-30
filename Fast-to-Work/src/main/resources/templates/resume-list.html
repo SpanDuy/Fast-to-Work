@@ -12,6 +12,9 @@
         <a th:href="@{/logout}">Logout</a>
         <a th:href="@{/Resume/new}">Create Resume</a>
     </span>
+    <div>
+        <a th:href="@{/job-vacancy/all}">View All Resumes</a>
+    </div>
     <div th:each="resume, index :${resumes}">
         <div>
             <a th:text="${resume.jobType}"></a>

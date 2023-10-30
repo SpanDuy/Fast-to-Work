@@ -1,0 +1,29 @@
+@startuml Registration Process
+
+start
+:Guest visits registration page;
+if (Choose Role: \nEmployee or Employer?) then (Role Selection)
+  :User selects a role;
+  if (Employee) then (Employee Registration)
+    :Employee enters details;
+    if (Data is valid?) then (Valid Data)
+      :Save employee to the database;
+      :Redirect to login page;
+    else (Invalid Data)
+      :Return to data entry;
+    endif
+  else (Employer)
+    :Employer enters details;
+    if (Data is valid?) then (Valid Data)
+      :Save employer to the database;
+      :Redirect to login page;
+    else (Invalid Data)
+      :Return to data entry;
+    endif
+  endif
+else (Role Not Chosen)
+  :Return to role selection page;
+endif
+stop
+
+@enduml

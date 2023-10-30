@@ -23,6 +23,13 @@ public class JobVacancyServiceImpl implements JobVacancyService {
     private EmployerRepository employerRepository;
 
     @Override
+    public List<JobVacancy> getAllJobVacancy() {
+        List<JobVacancy> jobVacancies = jobVacancyRepository.findAll();
+
+        return jobVacancies;
+    }
+
+    @Override
     public List<JobVacancy> findAllJobVacancy() {
         String username = SecurityUtil.getSessionUser();
         UserEntity user = employerRepository.findByEmail(username);

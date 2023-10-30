@@ -1,0 +1,24 @@
+@startuml Deployment Diagram
+
+cloud {
+  [Front-End]
+}
+
+node "Application Server" {
+  component [Thymeleaf UI]
+  component [User Service]
+  component [Resume Service]
+  component [Job Vacancy Service]
+}
+
+database "PostgreSQL" as db
+
+[Front-End] --> [Thymeleaf UI]
+[Thymeleaf UI] --> [User Service]
+[User Service] --> db
+[User Service] --> [Resume Service]
+[User Service] --> [Job Vacancy Service]
+[Resume Service] --> db
+[Job Vacancy Service] --> db
+
+@enduml

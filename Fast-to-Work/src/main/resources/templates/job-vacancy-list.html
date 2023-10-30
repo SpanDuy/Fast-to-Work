@@ -8,10 +8,13 @@
   <title>Job Vacancy List</title>
 </head>
 <body>
-<span>
+    <span>
         <a th:href="@{/logout}">Logout</a>
         <a th:href="@{/job-vacancy/new}">Create Job Vacancy</a>
     </span>
+    <div>
+        <a th:href="@{/Resume/all}">View All Resumes</a>
+    </div>
 <div th:each="jobVacancy, index :${jobVacancies}">
   <div>
     <a th:text="${jobVacancy.jobType}"></a>

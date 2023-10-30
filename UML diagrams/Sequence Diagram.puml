@@ -1,0 +1,26 @@
+@startuml Sequence Diagram
+
+actor User
+boundary Page
+database Database
+
+User --> Page : Request to view/update/delete resume/vacancy
+activate Page
+
+Page -> User : Display Page
+
+User -> Page : Perform action on the page (e.g., click a button)
+User -> BackendService : Request to view/update/delete resume/vacancy
+activate BackendService
+BackendService --> BackendService : Find user in the system
+BackendService -> ServiceDataBase : Request to the database
+activate ServiceDataBase
+ServiceDataBase --> Database : Request to the database
+deactivate ServiceDataBase
+BackendService --> User : Receive data from BackendService
+deactivate BackendService
+Page --> User : Display the result on the page
+
+deactivate Page
+
+@enduml

@@ -1,0 +1,72 @@
+@startuml Class Diagram
+
+class UserEntity {
+  - id: Long
+  - username: String
+  - email: String
+  - password: String
+  - roles: List<Role>
+}
+
+class Skill {
+  - id: Long
+  - skill: String
+}
+
+class Role {
+  - id: Long
+  - name: String
+  - users: List<UserEntity>
+}
+
+class Resume {
+  - id: Long
+  - employee: Employee
+  - jobType: String
+  - name: String
+  - surname: String
+  - middleName: String
+  - birthday: Date
+  - city: String
+  - gender: Boolean
+  - phoneNumber: String
+  - skills: List<Skill>
+  - gitLink: String
+}
+
+class JobVacancy {
+  - id: Long
+  - employer: Employer
+  - jobType: String
+  - company: String
+  - salary: Integer
+  - description: String
+  - skills: List<Skill>
+}
+
+class Employer {
+  - company: String
+  - jobVacancies: List<JobVacancy>
+}
+
+class Employee {
+  - name: String
+  - surname: String
+  - middleName: String
+  - birthday: Date
+  - city: String
+  - gender: Boolean
+  - phoneNumber: String
+  - resumes: List<Resume>
+}
+
+UserEntity "1" -- "N" Role
+UserEntity "1" -- "N" Resume
+UserEntity <|-- Employer
+UserEntity <|-- Employee
+JobVacancy "1" -- "N" Skill
+Resume "1" -- "N" Skill
+Employee "1" -- "N" Resume
+Employer "1" -- "N" JobVacancy
+
+@enduml

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume List</title>
+</head>
+<body>
+    <span>
+        <a th:href="@{/logout}">Logout</a>
+        <a th:href="@{/job-vacancy}">Redirect</a>
+    </span>
+<div th:each="resume, index :${resumes}">
+    <div>
+        <a th:text="${resume.jobType}"></a>
+    </div>
+    <div>
+        <a th:text="${resume.skills}"></a>
+    </div>
+    <div>
+        <a th:text="${resume.gitLink}"></a>
+    </div>
+    <span>
+        <a th:href="@{/Resume/{id}(id=${resume.id})}">View</a>
+    </span>
+</div>
+</body>
+</html>

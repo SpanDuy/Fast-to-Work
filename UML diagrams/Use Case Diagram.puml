@@ -1,0 +1,51 @@
+@startuml Use Case Diagram
+
+left to right direction
+
+actor "Unregistered User" as UnregisteredUser
+actor Employee as "Employee"
+actor Employer as "Employer"
+
+rectangle "System" {
+  usecase "Register" as Register
+}
+
+rectangle "Employee" {
+  usecase "Login" as LoginEmployee
+  usecase "Logout" as LogoutEmployee
+  usecase "View Job Vacancies" as ViewJobVacancies
+  usecase "Create Resume" as CreateResume
+  usecase "View Resume" as ViewResume
+  usecase "Delete Resume" as DeleteResume
+  usecase "Edit Resume" as EditResume
+}
+
+rectangle "Employer" {
+  usecase "Login" as LoginEmployer
+  usecase "Logout" as LogoutEmployer
+  usecase "View Resumes" as ViewResumes
+  usecase "Create Job Vacancy" as CreateJobVacancy
+  usecase "View Job Vacancy" as ViewJobVacancy
+  usecase "Delete Job Vacancy" as DeleteJobVacancy
+  usecase "Edit Job Vacancy" as EditJobVacancy
+}
+
+UnregisteredUser --> Register
+
+Employee --> LoginEmployee
+Employee --> LogoutEmployee
+Employee --> ViewJobVacancies
+Employee --> CreateResume
+Employee --> ViewResume
+Employee --> DeleteResume
+Employee --> EditResume
+
+Employer --> LoginEmployer
+Employer --> LogoutEmployer
+Employer --> ViewResumes
+Employer --> CreateJobVacancy
+Employer --> ViewJobVacancy
+Employer --> DeleteJobVacancy
+Employer --> EditJobVacancy
+
+@enduml
