@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -46,9 +47,11 @@ public class ResumeController {
     }
 
     @GetMapping("/Resume/{id}")
-    public String getResume(@PathVariable Long id, Model model) {
+    public String getResume(@PathVariable Long id, Model model, HttpServletRequest request) {
         Resume resume = resumeService.findResumeById(id);
+        String referrer = request.getHeader("Referer");
 
+        model.addAttribute("referrer", referrer);
         model.addAttribute("resume", resume);
         // model.addAttribute("skills", resume.getSkills());
 

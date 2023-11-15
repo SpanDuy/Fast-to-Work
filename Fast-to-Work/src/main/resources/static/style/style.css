@@ -1,0 +1,419 @@
+/*
+    class="fi fi-rr-cross-circle
+*/
+@import url('https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
+@import url('https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css');
+@import url('https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet');
+/*@import url('https://fonts.googleapis.com/css2?family=Jeju+Gothic&display=swap" rel="stylesheet');*/
+
+@charset "UTF-8";
+/*!
+* Start Bootstrap - Modern Business v5.0.6 (https://startbootstrap.com/template-overviews/modern-business)
+* Copyright 2013-2022 Start Bootstrap
+* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-modern-business/blob/master/LICENSE)
+*/
+/*!
+ * Bootstrap v5.1.3 (https://getbootstrap.com/)
+ * Copyright 2011-2021 The Bootstrap Authors
+ * Copyright 2011-2021 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+.top-border {
+    position: relative;
+    top: 5px;
+    padding: 10px;
+    background-color: #38B2CF;
+}
+
+.navigation {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    left: auto;
+}
+
+.navigation-icon {
+    text-decoration: none;
+    padding: 0px;
+    font-size: 50px;
+    color: #206677;
+}
+
+.fast-to-work {
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 48px;
+    color: #206677;
+    margin: 5px;
+}
+
+.icons-edit-delete {
+    position: absolute;
+    right: 10px;
+    top: 10px
+}
+
+.icon-edit-delete {
+    text-decoration: none;
+    padding: 0px;
+    font-size: 20px;
+    color: #206677;
+}
+
+.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+
+    background-color: #38B2CF;
+}
+
+.footer-text {
+    margin: 10px;
+    padding: 10px;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    color: #206677;
+}
+
+.footer-text-me {
+    font-size: 16px;
+    margin-left: 10px;
+    color: #206677;
+}
+
+.create-job-vacancy {
+    background-color: #38B2CF;
+    padding: 10px;
+    margin: 10px;
+    width: 220px;
+    text-align: center;
+}
+
+.create-job-vacancy-text {
+    text-decoration: none;
+    padding: 10px;
+    margin: 10px;
+    color: black;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+}
+
+.vacancy-block {
+    padding: 10px;
+    margin: 10px;
+    background-color: #38B2CF;
+    width: 400px;
+    position: relative;
+}
+
+.vacancy-detail-link {
+    text-decoration: none;
+    white-space: nowrap; /* Предотвращает перенос строк */
+    overflow: hidden;    /* Скрывает все, что выходит за границы блока */
+    text-overflow: ellipsis; /* Добавляет многоточие (...) для обозначения обрезанного текста */
+}
+
+.vacancy-text {
+    padding-left: 10px;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    color: black;
+    white-space: nowrap; /* Предотвращает перенос строк */
+    overflow: hidden;    /* Скрывает все, что выходит за границы блока */
+    text-overflow: ellipsis; /* Добавляет многоточие (...) для обозначения обрезанного текста */
+}
+
+.wrapper {
+    position: relative;
+    min-height: 90%;
+}
+
+.content {
+    position: relative;
+    padding-bottom: 245px;
+}
+
+
+
+.invalid-login {
+    background-color: red;
+    padding: 10px;
+    margin: 10px;
+
+    color: darkred;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    width: 400px;
+    /*height: 50px;*/
+    text-align: center;
+}
+
+.invalid-login-text {
+    margin: 0px;
+}
+
+.login-username {
+    position: relative;
+    background-color: #38B2CF;
+    width: 400px;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.detail-container {
+    position: relative;
+    background-color: #38B2CF;
+    width: 400px;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.skill-container {
+    position: relative;
+}
+
+.skills {
+    background-color: #38B2CF;
+    width: 250px;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.skill-input {
+    background-color: #222;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    color: white;
+}
+
+.login-username-input {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: #222;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    color: white;
+}
+
+.detail-input {
+    right: 10px;
+    top: 10px;
+    background-color: #222;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    color: white;
+
+    max-width: 390px;
+    min-width: 390px;
+    max-height: 400px;
+    min-height: 30px;
+    width: 100%;
+}
+
+.register-button {
+    display: block;
+    width: 240px;
+    height: auto;
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    padding: 10px;
+    margin: 10px 10px 10px 0;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    color: black;
+}
+
+.register-button-text {
+    text-decoration: none;
+    color: black;
+}
+
+.login-button {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    display: block;
+    width: 140px;
+    height: 68px;
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    padding: 10px;
+    margin: 10px 0 10px 10px;
+    text-align: center;
+    vertical-align: middle;
+    border: 0;
+}
+
+.end-register-button {
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    padding: 10px;
+    margin: 10px 0 10px 10px;
+    text-align: center;
+    vertical-align: middle;
+    border: 0;
+}
+
+.register-login-block {
+    position: relative;
+    display: block;
+    width: 420px;
+    height: 100px;
+    margin: 10px;
+    padding: 10px 0 10px 0;
+}
+
+.login-role {
+    position: relative;
+    background-color: #38B2CF;
+    width: 200px;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    padding: 10px;
+    margin: 10px 10px 10px 0;
+}
+
+.login-role-select {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: #222;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    color: white; /* Цвет текста для лучшей видимости */
+}
+
+/*.login-username-input {*/
+/*    position: absolute;*/
+/*    right: 10px;*/
+/*    top: 10px;*/
+/*    background-color: #222;*/
+/*    font-family: "Itim", Arial, sans-serif;*/
+/*    font-size: 20px;*/
+/*    color: white;*/
+/*}*/
+
+.salary-input {
+    margin-left: 25px;
+    background-color: #222;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    color: white; /* Цвет текста для лучшей видимости */
+}
+
+.currency-select {
+    background-color: #222;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    color: white; /* Цвет текста для лучшей видимости */
+}
+
+.role-continue-reg-block {
+    position: relative;
+    display: block;
+    width: 420px;
+    height: 100px;
+    margin: 10px;
+    padding: 10px 0 10px 0;
+}
+
+.continue-reg-button {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    display: block;
+    width: 180px;
+    height: 49px;
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 16px;
+    padding: 10px;
+    margin: 10px 0 10px 10px;
+    text-align: center;
+    vertical-align: middle;
+    border: 0;
+}
+
+.add-skill-button {
+    display: block;
+    width: 190px;
+    height: 68px;
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    padding: 10px;
+    margin: 10px 10px 10px 0;
+    text-align: center;
+    vertical-align: middle;
+    border: 0;
+}
+
+.create-button {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    display: block;
+    width: 190px;
+    height: 68px;
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    padding: 10px;
+    margin: 10px 0 10px 10px;
+    text-align: center;
+    vertical-align: middle;
+    border: 0;
+}
+
+.vacancy-detail-container {
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    padding: 10px;
+    margin: 10px;
+    width: 40%;
+}
+
+.jobVacancy-jobType {
+    font-size: 32px;
+    text-align: center;
+}
+
+.company-salary {
+    font-size: 24px;
+}
+
+.description {
+    display: block;
+    font-size: 18px;
+    width: 300px;
+    word-wrap: break-word;
+}
+
+/*.skill-detail-container {*/
+/*    position: relative;*/
+/*}*/
+
+.skill-detail {
+    display: inline-block;
+    width: 30%;
+    margin-right: 10px; /* Расстояние между навыками */
+    border: 1px solid #206677;
+    text-align: center;
+    margin-bottom: 10px; /* Расстояние между строками */
+}
+
+.last-in-row {
+    margin-right: 0; /* Убираем правый margin у последнего элемента в строке */
+}

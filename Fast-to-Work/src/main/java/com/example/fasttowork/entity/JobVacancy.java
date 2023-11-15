@@ -31,6 +31,8 @@ public class JobVacancy {
 
     private Integer salary;
 
+    private String currency;
+
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

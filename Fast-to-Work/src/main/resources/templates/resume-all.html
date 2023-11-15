@@ -8,23 +8,25 @@
     <title>Resume List</title>
 </head>
 <body>
-    <span>
-        <a th:href="@{/logout}">Logout</a>
-        <a th:href="@{/job-vacancy}">Redirect</a>
-    </span>
-<div th:each="resume, index :${resumes}">
-    <div>
-        <a th:text="${resume.jobType}"></a>
-    </div>
-    <div>
-        <a th:text="${resume.skills}"></a>
-    </div>
-    <div>
-        <a th:text="${resume.gitLink}"></a>
-    </div>
-    <span>
-        <a th:href="@{/Resume/{id}(id=${resume.id})}">View</a>
-    </span>
-</div>
+    <section layout:fragment="body">
+        <div class="vacancy-container">
+            <div th:each="resume, index :${resumes}" class="vacancy-block">
+                <a th:href="@{/Resume/{id}(id=${resume.id})}" class="vacancy-detail-link">
+                    <div>
+                        <p th:text="${resume.jobType}" class="resume-text"></p>
+                    </div>
+                    <div>
+                        <p th:text="${resume.skills}" class="resume-text"></p>
+                    </div>
+                    <div>
+                        <p th:text="${resume.gitLink}" class="resume-text"></p>
+                    </div>
+<!--                <span>-->
+<!--                    <a th:href="@{/Resume/{id}(id=${resume.id})}">View</a>-->
+<!--                </span>-->
+                </a>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

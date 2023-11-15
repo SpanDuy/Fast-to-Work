@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Currency;
 import java.util.List;
 
@@ -15,8 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 public class JobVacancyRequest {
     private Long id;
+    @NotEmpty(message = "Job Type should not be empty")
     private String jobType;
+    @NotEmpty
     private Integer salary;
+    @NotEmpty
+    private String currency;
+    @NotEmpty
     private String description;
     private List<Skill> skills;
 }

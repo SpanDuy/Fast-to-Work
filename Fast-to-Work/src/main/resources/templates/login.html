@@ -3,67 +3,44 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout}">
 <head>
-  <title>Register</title>
+    <title>Register</title>
 </head>
 <section layout:fragment="body">
-  <style>
-    .main {
-      padding: 0px 10px;
-    }
-
-    @media screen and (max-width: 450px) {
-      .login-form{
-        margin-top: 10%;
-      }
-      .register-form{
-        margin-top: 10%;
-      }
-    }
-    @media screen and (min-width: 768px){
-      .main{
-        margin-left: 30%;
-      }
-
-      .sidenav{
-        width: 40%;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-      }
-    }
-  </style>
-  <div>
-    <div >
-      <div th:if="${param.error}">
-        Invalid username and password.
-      </div>
-      <div th:if="${param.logout}">
-        You have been logged out.</div>
-      <div>
-        <form method="post" th:action="@{/login}">
-          <div>
-            <label>Username</label>
-            <input
-                    id="username"
-                    type="text"
-                    placeholder="Username"
-                    name="username">
-          </div>
-          <div>
-            <label>Password</label>
-            <input
-                    id="password"
-                    type="password"
-                    placeholder="Password"
-                    name="password">
-          </div>
-<!--          <button th:href="@{/register}" type="submit">Don't have an account? Register here.</button>-->
-          <a th:href="@{/register}">Don't have an account? Register here.</a>
-          <button type="submit" value="Log in">Login</button>
-        </form>
-      </div>
+    <div>
+        <div>
+            <div th:if="${param.error}" class="invalid-login">
+                <p class="invalid-login-text"> Invalid username and password. </p>
+            </div>
+            <div th:if="${param.logout}" class="invalid-login">
+                <p class="invalid-login-text">You have been logged out.</p>
+            </div>
+            <div>
+                <form method="post" th:action="@{/login}">
+                    <div class="login-username">
+                        <label>Username</label>
+                        <input
+                                id="username"
+                                type="text"
+                                placeholder="Username"
+                                name="username"
+                                class="login-username-input">
+                    </div>
+                    <div class="login-username">
+                        <label>Password</label>
+                        <input
+                                id="password"
+                                type="password"
+                                placeholder="Password"
+                                name="password"
+                                class="login-username-input">
+                    </div>
+                    <!--          <button th:href="@{/register}" type="submit">Don't have an account? Register here.</button>-->
+                    <span class="register-login-block">
+                        <a th:href="@{/register}" class="register-button">Don't have an account? Register here.</a><button type="submit" value="Log in" class="login-button">Login</button>
+                    </span>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </section>
 </html>

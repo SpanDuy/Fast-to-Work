@@ -1,32 +1,43 @@
-<!DOCTYPE html>
-<html
-        xmlns:th="http://thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-  <meta charset="UTF-8">
-  <title>Job Vacancy List</title>
+    <title>Job Vacancy List</title>
+    <layout:fragment name="head">
+        <link rel="stylesheet" href="../style/style.css">
+    </layout:fragment>
 </head>
 <body>
-    <span>
-        <a th:href="@{/logout}">Logout</a>
-        <a th:href="@{/job-vacancy/new}">Create Job Vacancy</a>
-    </span>
-    <div>
-        <a th:href="@{/Resume/all}">View All Resumes</a>
-    </div>
-<div th:each="jobVacancy, index :${jobVacancies}">
-  <div>
-    <a th:text="${jobVacancy.jobType}"></a>
-  </div>
-  <div>
-    <a th:text="${jobVacancy.salary}"></a>
-  </div>
-  <span>
-            <a th:href="@{/job-vacancy/{id}(id=${jobVacancy.id})}">View</a>
-            <a th:href="@{/job-vacancy/edit/{id}(id=${jobVacancy.id})}">Edit</a>
-            <a th:href="@{/job-vacancy/delete/{id}(id=${jobVacancy.id})}">Delete</a>
-        </span>
-</div>
+<main class="flex-shrink-0">
+    <section layout:fragment="body">
+        <div class="create-job-vacancy">
+            <a th:href="@{/job-vacancy/new}" class="create-job-vacancy-text">Create Job Vacancy</a>
+        </div>
+
+        <div class="vacancy-container">
+            <div th:each="jobVacancy, index :${jobVacancies}" class="vacancy-block">
+                <a th:href="@{/job-vacancy/{id}(id=${jobVacancy.id})}" class="vacancy-detail-link">
+                    <span>
+                        <div>
+                            <div>
+                                <p th:text="${jobVacancy.jobType}" class="vacancy-text"></p>
+                            </div>
+                            <div>
+                                <span>
+                                    <p th:text="${jobVacancy.salary} + ' ' + ${jobVacancy.currency}" class="vacancy-text"></p>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="icons-edit-delete">
+                            <a th:href="@{/job-vacancy/edit/{id}(id=${jobVacancy.id})}" class="icon-edit-delete"><i class="fi fi-rr-edit"></i></a>
+                            <a th:href="@{/job-vacancy/delete/{id}(id=${jobVacancy.id})}" class="icon-edit-delete"><i class="fi fi-rr-cross-circle"></i></a>
+                        </div>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+</layout:fragment>
 </body>
 </html>

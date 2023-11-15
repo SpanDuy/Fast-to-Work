@@ -6,6 +6,7 @@ import com.example.fasttowork.entity.converter.SkillConverter;
 import com.example.fasttowork.payload.request.JobVacancyRequest;
 import com.example.fasttowork.payload.request.ResumeRequest;
 import com.example.fasttowork.service.JobVacancyService;
+import com.example.fasttowork.validator.DtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,10 +26,15 @@ public class JobVacancyController {
 
     private SkillConverter skillConverter;
 
+    private DtoValidator dtoValidator;
+
     @Autowired
-    public JobVacancyController(JobVacancyService jobVacancyService, SkillConverter skillConverter) {
+    public JobVacancyController(JobVacancyService jobVacancyService,
+                                SkillConverter skillConverter,
+                                DtoValidator dtoValidator) {
         this.jobVacancyService = jobVacancyService;
         this.skillConverter = skillConverter;
+        this.dtoValidator = dtoValidator;
     }
 
     @GetMapping("/job-vacancy/all")
@@ -71,7 +77,10 @@ public class JobVacancyController {
     public String createJobVacancyRequest(@ModelAttribute("resume") JobVacancyRequest jobVacancyRequest,
                                           BindingResult result,
                                           Model model) {
+        dtoValidator.validate(jobVacancyRequest, result);
+
         if(result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("jobVacancyRequest", jobVacancyRequest);
             return "job-vacancy-create";
         }
@@ -92,6 +101,7 @@ public class JobVacancyController {
                 .skills(jobVacancy.getSkills())
                 .description(jobVacancy.getDescription())
                 .salary(jobVacancy.getSalary())
+                .currency(jobVacancy.getCurrency())
                 .build();
 
         model.addAttribute("jobVacancyRequest", jobVacancyRequest); // Используем "resume" вместо "resumeRequest"

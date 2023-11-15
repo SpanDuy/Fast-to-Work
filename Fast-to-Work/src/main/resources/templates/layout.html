@@ -1,0 +1,47 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org"
+      layout:decorator="layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Fast to Work</title>
+    <link rel="stylesheet" href="/style/style.css">
+    <layout:fragment name="head"></layout:fragment>
+</head>
+<body>
+<header>
+
+</header>
+
+<nav class="top-border">
+    <p class="fast-to-work">Fast to Work</p>
+    <ul class="navigation">
+        <a th:href="@{/logout}" class="navigation-icon"><i class="fi fi-rs-sign-out-alt"></i></a>
+        <a sec:authorize="isAuthenticated()" href="/all" class="navigation-icon"><i class="fi fi-rr-search"></i></a>
+        <a href="#" class="navigation-icon"><i class="fi fi-rr-messages"></i></a>
+        <a sec:authorize="isAuthenticated()" href="/" class="navigation-icon"><i class="fi fi-rr-circle-user"></i></a>
+    </ul>
+</nav>
+<div class="wrapper">
+    <main class="content">
+        <!--  <layout:fragment name="body"></layout:fragment>-->
+        <body layout:fragment="body" class="container"></body>
+    </main>
+
+    <footer class="footer">
+        <div>
+            <p class="footer-text">All rights reserved &copy; 2023</p>
+            <div class="footer-text-me">
+                <p>Кипятков Владислав Иванович</p>
+                <p>БГУИР, ФКСИС, ВМСИС, 2021-2025</p>
+                <p>https://github.com/SpanDuy/Fast-to-Work</p>
+                <p>+375(44) 551-63-59</p>
+                <p>hdhrbux@gmail.com</p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<layout:fragment name="scripts"></layout:fragment>
+</body>
+</html>

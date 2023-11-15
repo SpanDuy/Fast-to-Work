@@ -3,78 +3,59 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout}">
 <head>
-  <title>Register</title>
+    <title>Register</title>
 </head>
 <section layout:fragment="body">
-  <style>
-    .main {
-      padding: 0px 10px;
-    }
-
-    @media screen and (max-width: 450px) {
-      .login-form{
-        margin-top: 10%;
-      }
-      .register-form{
-        margin-top: 10%;
-      }
-    }
-    @media screen and (min-width: 768px){
-      .main{
-        margin-left: 30%;
-      }
-
-      .sidenav{
-        width: 40%;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-      }
-    }
-  </style>
-  <div>
     <div>
-      <div th:if="${param.fail}">
-        Username or email already exists</div>
-      <div>
-        <form method="post" role="form" th:action="@{/register/save}" th:object="${user}">
-          <div>
-            <label>Username</label>
-            <input
-                    type="text"
-                    placeholder="Username"
-                    th:field="*{username}">
-          </div>
-          <p th:if="${#fields.hasErrors('username')}"></p>
-          <div>
-            <label>Email</label>
-            <input
-                    type="text"
-                    placeholder="Email"
-                    th:field="*{email}">
-          </div>
-          <p th:if="${#fields.hasErrors('email')}"></p>
-          <div>
-            <label>Password</label>
-            <input
-                    type="password"
-                    placeholder="Password"
-                    th:field="*{password}">
-          </div>
-          <p th:if="${#fields.hasErrors('password')}" ></p>
-          <label for="role">Role</label>
-          <select
-                  class="form-control"
-                  id="role"
-                  th:field="*{role.name}">
-            <option value="EMPLOYER">EMPLOYER</option>
-            <option value="EMPLOYEE">EMPLOYEE</option>
-          </select>
-          <button th:href="@{/register}" type="submit">Continue Registration</button>
-        </form>
-      </div>
+        <div>
+            <div th:if="${param.fail}" class="invalid-login">
+                <p class="invalid-login-text"> Username or email already exists</p>
+            </div>
+            <div>
+                <form method="post" role="form" th:action="@{/register/save}" th:object="${user}">
+                    <div class="login-username">
+                        <label>Username</label>
+                        <input
+                                type="text"
+                                placeholder="Username"
+                                th:field="*{username}"
+                                class="login-username-input">
+                    </div>
+                    <p th:if="${#fields.hasErrors('username')}"></p>
+                    <div class="login-username">
+                        <label>Email</label>
+                        <input
+                                type="text"
+                                placeholder="Email"
+                                th:field="*{email}"
+                                class="login-username-input">
+                    </div>
+                    <p th:if="${#fields.hasErrors('email')}"></p>
+                    <div class="login-username">
+                        <label>Password</label>
+                        <input
+                                type="password"
+                                placeholder="Password"
+                                th:field="*{password}"
+                                class="login-username-input">
+                    </div>
+                    <p th:if="${#fields.hasErrors('password')}" ></p>
+                    <span class="role-continue-reg-block">
+                        <div class="login-role">
+                            <label for="role">Role</label>
+                            <select
+                                    class="login-role-select"
+                                    id="role"
+                                    th:field="*{role.name}">
+                                <option value="EMPLOYER">EMPLOYER</option>
+                                <option value="EMPLOYEE">EMPLOYEE</option>
+                            </select>
+                        </div>
+                        <button th:href="@{/register}" type="submit" class="continue-reg-button">Continue Registration</button>
+                    </span>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </section>
 </html>

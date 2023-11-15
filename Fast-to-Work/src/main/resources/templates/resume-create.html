@@ -7,55 +7,57 @@
 </head>
 <body>
 <main>
-    <a th:href="@{/Resume}">Redirect</a>
+    <section layout:fragment="body">
+        <a th:href="@{/Resume}">Redirect</a>
 
-    <div>
-        <form role="form" method="post" th:action="@{/Resume/new}" th:object="${resume}">
-            <div>
-                <label for="jobType">Job Type</label>
-                <input
-                        type="text"
-                        class="form-control"
-                        id="jobType"
-                        name="jobType"
-                        th:field="*{jobType}"
-                        placeholder="Job Type">
-                <p th:if="${#fields.hasErrors('jobType')}" class="text-danger" th:errors="*{jobType}"></p>
-            </div>
-            <div>
-                <label for="gitLink">Git Link</label>
-                <input
-                        type="text"
-                        class="form-control"
-                        id="gitLink"
-                        name="gitLink"
-                        th:field="*{gitLink}"
-                        placeholder="Git Link">
-                <p th:if="${#fields.hasErrors('gitLink')}" class="text-danger" th:errors="*{gitLink}"></p>
-            </div>
+        <div>
+            <form role="form" method="post" th:action="@{/Resume/new}" th:object="${resume}">
+                <div>
+                    <label for="jobType">Job Type</label>
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="jobType"
+                            name="jobType"
+                            th:field="*{jobType}"
+                            placeholder="Job Type">
+                    <p th:if="${#fields.hasErrors('jobType')}" class="text-danger" th:errors="*{jobType}"></p>
+                </div>
+                <div>
+                    <label for="gitLink">Git Link</label>
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="gitLink"
+                            name="gitLink"
+                            th:field="*{gitLink}"
+                            placeholder="Git Link">
+                    <p th:if="${#fields.hasErrors('gitLink')}" class="text-danger" th:errors="*{gitLink}"></p>
+                </div>
 
-            <p>Skills</p>
-            <div id="skillContainer"></div>
-            <button id="btnAddSkill" type="button">Add Skill</button>
+                <p>Skills</p>
+                <div id="skillContainer"></div>
+                <button id="btnAddSkill" type="button">Add Skill</button>
 
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script type="text/javascript">
-                $(document).ready(function() {
-                    var skillCount = 1;
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        var skillCount = 1;
 
-                    $("#btnAddSkill").on("click", function() {
-                        var newSkillInput = $("<input>").attr("type", "text").attr("name", "skills[" + skillCount + "]");
-                        var newSkillError = $("<p>").addClass("text-danger").attr("th:if", "${#fields.hasErrors('skills[" + skillCount + "]')}")
-                            .attr("th:errors", "*{skills[" + skillCount + "]}");
-                        $("#skillContainer").append(newSkillInput);
-                        $("#skillContainer").append(newSkillError);
-                        skillCount++;
+                        $("#btnAddSkill").on("click", function() {
+                            var newSkillInput = $("<input>").attr("type", "text").attr("name", "skills[" + skillCount + "]");
+                            var newSkillError = $("<p>").addClass("text-danger").attr("th:if", "${#fields.hasErrors('skills[" + skillCount + "]')}")
+                                .attr("th:errors", "*{skills[" + skillCount + "]}");
+                            $("#skillContainer").append(newSkillInput);
+                            $("#skillContainer").append(newSkillError);
+                            skillCount++;
+                        });
                     });
-                });
-            </script>
-            <button type="submit">Create</button>
-        </form>
-    </div>
+                </script>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </section>
 </main>
 </body>
 </html>

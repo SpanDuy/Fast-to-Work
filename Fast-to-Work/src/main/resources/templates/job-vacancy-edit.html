@@ -7,66 +7,68 @@
 </head>
 <body>
 <main>
-    <a th:href="@{/job-vacancy}">Redirect</a>
+    <section layout:fragment="body">
+        <a th:href="@{/job-vacancy}">Redirect</a>
 
-    <div>
-        <form role="form" method="post" th:action="@{/job-vacancy/edit/{id}(id=${jobVacancyRequest.id})}" th:object="${jobVacancyRequest}">
-            <div>
-                <label for="jobType">Job Type</label>
-                <input
-                        type="text"
-                        class="form-control"
-                        id="jobType"
-                        name="jobType"
-                        th:field="*{jobType}"
-                        placeholder="Job Type">
-                <p th:if="${#fields.hasErrors('jobType')}" class="text-danger" th:errors="*{jobType}"></p>
-            </div>
-            <div>
-                <label for="salary">Salary</label>
-                <input
-                        type="text"
-                        class="form-control"
-                        id="salary"
-                        name="salary"
-                        th:field="*{salary}"
-                        placeholder="Salary">
-                <p th:if="${#fields.hasErrors('salary')}" class="text-danger" th:errors="*{salary}"></p>
-            </div>
-            <div>
-                <label for="description">Description</label>
-                <input
-                        type="text"
-                        class="form-control"
-                        id="description"
-                        name="description"
-                        th:field="*{description}"
-                        placeholder="Description">
-                <p th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></p>
-            </div>
+        <div>
+            <form role="form" method="post" th:action="@{/job-vacancy/edit/{id}(id=${jobVacancyRequest.id})}" th:object="${jobVacancyRequest}">
+                <div>
+                    <label for="jobType">Job Type</label>
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="jobType"
+                            name="jobType"
+                            th:field="*{jobType}"
+                            placeholder="Job Type">
+                    <p th:if="${#fields.hasErrors('jobType')}" class="text-danger" th:errors="*{jobType}"></p>
+                </div>
+                <div>
+                    <label for="salary">Salary</label>
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="salary"
+                            name="salary"
+                            th:field="*{salary}"
+                            placeholder="Salary">
+                    <p th:if="${#fields.hasErrors('salary')}" class="text-danger" th:errors="*{salary}"></p>
+                </div>
+                <div>
+                    <label for="description">Description</label>
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="description"
+                            name="description"
+                            th:field="*{description}"
+                            placeholder="Description">
+                    <p th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></p>
+                </div>
 
-            <p>Skills</p>
-            <div id="skillContainer"></div>
-            <button id="btnAddSkill" type="button">Add Skill</button>
+                <p>Skills</p>
+                <div id="skillContainer"></div>
+                <button id="btnAddSkill" type="button">Add Skill</button>
 
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script type="text/javascript">
-                $(document).ready(function() {
-                    var skillCount = 1;
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        var skillCount = 1;
 
-                    $("#btnAddSkill").on("click", function() {
-                        var newSkillInput = $("<input>").attr("type", "text").attr("name", "skills[" + skillCount + "]");
-                        var newSkillError = $("<p>").addClass("text-danger").attr("th:if", "${#fields.hasErrors('skills[" + skillCount + "]')}")
-                            .attr("th:errors", "*{skills[" + skillCount + "]}");
-                        $("#skillContainer").append(newSkillInput);
-                        $("#skillContainer").append(newSkillError);
-                        skillCount++;
+                        $("#btnAddSkill").on("click", function() {
+                            var newSkillInput = $("<input>").attr("type", "text").attr("name", "skills[" + skillCount + "]");
+                            var newSkillError = $("<p>").addClass("text-danger").attr("th:if", "${#fields.hasErrors('skills[" + skillCount + "]')}")
+                                .attr("th:errors", "*{skills[" + skillCount + "]}");
+                            $("#skillContainer").append(newSkillInput);
+                            $("#skillContainer").append(newSkillError);
+                            skillCount++;
+                        });
                     });
-                });
-            </script>
-            <button type="submit">Create</button>
-        </form>
-    </div>
+                </script>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </section>
 </main>
 </body>
 </html>

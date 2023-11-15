@@ -1,6 +1,7 @@
 package com.example.fasttowork.config;
 
 import com.example.fasttowork.entity.converter.SkillConverter;
+import com.example.fasttowork.validator.DtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.validation.Validator;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
@@ -21,5 +23,10 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(skillConverter);
+    }
+
+    @Bean
+    public Validator validator() {
+        return new DtoValidator();
     }
 }

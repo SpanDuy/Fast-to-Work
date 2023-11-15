@@ -12,6 +12,7 @@ import com.example.fasttowork.service.JobVacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Currency;
 import java.util.List;
 
 @Service
@@ -60,6 +61,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
         jobVacancy.setJobType(jobVacancyRequest.getJobType());
         jobVacancy.setSalary(jobVacancyRequest.getSalary());
+        jobVacancy.setCurrency(jobVacancyRequest.getCurrency());
         jobVacancy.setDescription(jobVacancyRequest.getDescription());
         jobVacancy.setSkills(jobVacancyRequest.getSkills());
 
@@ -78,6 +80,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
         jobVacancy.setJobType(jobVacancyRequest.getJobType());
         jobVacancy.setSalary(jobVacancyRequest.getSalary());
+        jobVacancy.setCurrency(jobVacancy.getCurrency());
         jobVacancy.setDescription(jobVacancyRequest.getDescription());
         jobVacancy.setSkills(jobVacancyRequest.getSkills());
 

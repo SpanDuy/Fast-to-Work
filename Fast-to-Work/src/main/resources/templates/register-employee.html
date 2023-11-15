@@ -6,92 +6,74 @@
     <title>Register</title>
 </head>
 <section layout:fragment="body">
-    <style>
-        .main {
-            padding: 0px 10px;
-        }
-
-        @media screen and (max-width: 450px) {
-            .login-form{
-                margin-top: 10%;
-            }
-            .register-form{
-                margin-top: 10%;
-            }
-        }
-        @media screen and (min-width: 768px){
-            .main{
-                margin-left: 30%;
-            }
-
-            .sidenav{
-                width: 40%;
-                position: fixed;
-                z-index: 1;
-                top: 0;
-                left: 0;
-            }
-        }
-    </style>
     <div>
         <div>
             <div th:if="${param.fail}">
                 Username or email already exists</div>
             <div>
                 <form method="post" role="form" th:action="@{/register/employee/save}" th:object="${employee}">
-                    <div>
+                    <div class="login-username">
                         <label>Name</label>
                         <input
                                 type="text"
                                 placeholder="Name"
-                                th:field="*{name}">
+                                th:field="*{name}"
+                                class="login-username-input">
                     </div>
-                    <div>
+                    <div class="login-username">
                         <label>Surname</label>
                         <input
                                 type="text"
                                 placeholder="Surname"
-                                th:field="*{surname}">
+                                th:field="*{surname}"
+                                class="login-username-input">
                     </div>
-                    <div>
+                    <div class="login-username">
                         <label>Middle Name</label>
                         <input
                                 type="text"
                                 placeholder="Middle Name"
-                                th:field="*{middleName}">
+                                th:field="*{middleName}"
+                                class="login-username-input">
                     </div>
-                    <div>
+                    <div class="login-username">
                         <label for="birthday">Birthday</label>
                         <input
                                 type="date"
-                                class="form-control"
+                                class="login-username-input"
                                 id="birthday"
                                 th:field="*{birthday}">
                         <p th:if="${#fields.hasErrors('birthday')}" class="text-danger" th:errors="*{birthday}"></p>
                     </div>
-                    <div>
+                    <div class="login-username">
                         <label>City</label>
                         <input
                                 type="text"
                                 placeholder="City"
-                                th:field="*{city}">
+                                th:field="*{city}"
+                                class="login-username-input">
                     </div>
-                    <label for="gender">Gender</label>
-                    <select
-                            class="form-control"
-                            id="gender"
-                            th:field="*{gender}">
-                        <option value="true">Male</option>
-                        <option value="false">Female</option>
-                    </select>
-                    <div>
+                    <div class="login-username">
                         <label>Phone Number</label>
                         <input
                                 type="text"
                                 placeholder="Phone Number"
-                                th:field="*{phoneNumber}">
+                                th:field="*{phoneNumber}"
+                                class="login-username-input">
                     </div>
-                    <button th:href="@{/register/employee}" type="submit">Register</button>
+                    <span class="role-continue-reg-block">
+                        <div class="login-role">
+                            <label for="gender">Gender</label>
+                            <select
+                                    class="login-role-select"
+                                    id="gender"
+                                    th:field="*{gender}">
+                                <option value="true">Male</option>
+                                <option value="false">Female</option>
+                            </select>
+                        </div>
+                        <button th:href="@{/register/employee}" type="submit" class="continue-reg-button">Register</button>
+                    </span>
                 </form>
             </div>
         </div>

@@ -122,4 +122,20 @@ public class AuthController {
             return "redirect:/job-vacancy?success";
         }
     }
+
+    @GetMapping("/all")
+    public String redirectToResumeOrVacancy() {
+        String username = SecurityUtil.getSessionUser();
+        UserEntity user = userService.findByEmail(username);
+
+        List<Role> roles = user.getRoles();
+        boolean isEmployee = roles.stream()
+                .anyMatch(role -> role.getName().equals("EMPLOYEE"));
+
+        if (isEmployee) {
+            return "redirect:/job-vacancy/all";
+        } else {
+            return "redirect:/Resume/all";
+        }
+    }
 }

@@ -8,16 +8,28 @@
     <title>Job Vacancy Detail</title>
 </head>
 <body>
-    <a th:href="@{${referrer}}">Redirect</a>
+<section layout:fragment="body">
+    <div class="create-job-vacancy">
+        <a th:href="@{${referrer}}" class="create-job-vacancy-text">Redirect</a>
+    </div>
 
-    <p th:text="${jobVacancy.jobType}"></p>
-    <p th:text="${jobVacancy.company}"></p>
-    <p th:text="${jobVacancy.salary}"></p>
-    <p th:text="${jobVacancy.description}"></p>
-    <div th:each="skill : ${jobVacancy.skills}">
-        <div>
-            <span th:text="${skill.skill}"></span>
+    <div class="vacancy-detail-container">
+        <div class="jobVacancy-jobType">
+            <p th:text="${jobVacancy.jobType}"></p>
+        </div>
+        <div class="company-salary">
+            <p th:text="'Company: ' + ${jobVacancy.company}"></p>
+            <p th:text="'Salary: ' + ${jobVacancy.salary} + ' ' + ${jobVacancy.currency}"></p>
+        </div>
+        <div class="description">
+            <p th:text="'Description: ' + ${jobVacancy.description}"></p>
+        </div>
+        <div class="skill-detail-container">
+            <div th:each="skill, status : ${jobVacancy.skills}" class="skill-detail" th:classappend="${#strings.endsWith(status.index, 2)} ? 'last-in-row' : ''">
+                <p th:text="${skill.skill}"></p>
+            </div>
         </div>
     </div>
+</section>
 </body>
 </html>

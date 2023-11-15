@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html
         xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -7,47 +8,60 @@
 </head>
 <body>
 <main>
-    <a th:href="@{/job-vacancy}">Redirect</a>
-
+    <section layout:fragment="body">
     <div>
+        <div>
+            <p th:each="error : ${errors}" th:text="${error.defaultMessage}" class="invalid-login"></p>
+        </div>
         <form role="form" method="post" th:action="@{/job-vacancy/new}" th:object="${jobVacancyRequest}">
-            <div>
-                <label for="jobType">Job Type</label>
+            <div class="login-username">
+                <label>Job Type</label>
                 <input
                         type="text"
-                        class="form-control"
-                        id="jobType"
-                        name="jobType"
+                        class="login-username-input"
                         th:field="*{jobType}"
                         placeholder="Job Type">
                 <p th:if="${#fields.hasErrors('jobType')}" class="text-danger" th:errors="*{jobType}"></p>
             </div>
-            <div>
+            <div class="login-username">
+                <span>
                 <label for="salary">Salary</label>
                 <input
                         type="number"
-                        class="form-control"
+                        class="salary-input"
                         id="salary"
                         name="salary"
                         th:field="*{salary}"
                         placeholder="Salary">
-                <p th:if="${#fields.hasErrors('salary')}" class="text-danger" th:errors="*{salary}"></p>
+<!--                <p th:if="${#fields.hasErrors('salary')}" class="text-danger" th:errors="*{salary}"></p>-->
+                <p th:if="${#fields.hasErrors('salary')}"></p>
+                <select
+                        class="currency-select"
+                        id="currency"
+                        th:field="*{currency}">
+                        <option value="USD">USD</option>
+                        <option value="BYN">BYN</option>
+                </select>
+                </span>
             </div>
-            <div>
+            <div class="detail-container">
                 <label for="description">Description</label>
-                <input
-                        type="text"
-                        class="form-control"
+                <textarea
+                        type="textarea"
+                        class="detail-input"
                         id="description"
                         name="description"
                         th:field="*{description}"
                         placeholder="Description">
-                <p th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></p>
+                </textarea>
+<!--                <p th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></p>-->
+                <p th:if="${#fields.hasErrors('description')}"></p>
             </div>
 
-            <p>Skills</p>
-            <div id="skillContainer"></div>
-            <button id="btnAddSkill" type="button">Add Skill</button>
+            <div class="skills">
+                <p>Skills</p>
+                <div id="skillContainer" class="skill-container"></div>
+            </div>
 
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script type="text/javascript">
@@ -55,7 +69,10 @@
                     var skillCount = 1;
 
                     $("#btnAddSkill").on("click", function() {
-                        var newSkillInput = $("<input>").attr("type", "text").attr("name", "skills[" + skillCount + "]");
+                        var newSkillInput = $("<input>").attr("type", "text")
+                                                        .attr("name", "skills[" + skillCount + "]")
+                                                        .addClass("skill-input")
+                                                        .attr("placeholder", "Skill " + skillCount);
                         var newSkillError = $("<p>").addClass("text-danger").attr("th:if", "${#fields.hasErrors('skills[" + skillCount + "]')}")
                             .attr("th:errors", "*{skills[" + skillCount + "]}");
                         $("#skillContainer").append(newSkillInput);
@@ -64,9 +81,13 @@
                     });
                 });
             </script>
-            <button type="submit">Create</button>
+            <span class="register-login-block">
+                <button id="btnAddSkill" type="button" class="add-skill-button">Add Skill</button>
+                <button type="submit" class="create-button">Create</button>
+            </span>
         </form>
     </div>
+    </section>
 </main>
 </body>
 </html>

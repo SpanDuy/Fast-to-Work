@@ -8,20 +8,22 @@
     <title>Job Vacancy List</title>
 </head>
 <body>
-    <span>
-        <a th:href="@{/logout}">Logout</a>
-        <a th:href="@{/resume}">Redirect</a>
-    </span>
-<div th:each="jobVacancy, index :${jobVacancies}">
-    <div>
-        <a th:text="${jobVacancy.jobType}"></a>
-    </div>
-    <div>
-        <a th:text="${jobVacancy.salary}"></a>
-    </div>
-    <span>
-        <a th:href="@{/job-vacancy/{id}(id=${jobVacancy.id})}">View</a>
-    </span>
-</div>
+    <section layout:fragment="body">
+        <span>
+            <a th:href="@{/logout}">Logout</a>
+            <a th:href="@{/Resume}">Redirect</a>
+        </span>
+        <div th:each="jobVacancy, index :${jobVacancies}">
+            <div>
+                <a th:text="${jobVacancy.jobType}"></a>
+            </div>
+            <div>
+                <a th:text="${jobVacancy.salary}"></a>
+            </div>
+            <span>
+                <a th:href="@{/job-vacancy/{id}(id=${jobVacancy.id})}">View</a>
+            </span>
+        </div>
+    </section>
 </body>
 </html>
