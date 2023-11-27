@@ -52,9 +52,9 @@ public class Resume {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "description")
+    private String description;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Skill> skills;
-
-    @Column(name = "git_link")
-    private String gitLink;
 }

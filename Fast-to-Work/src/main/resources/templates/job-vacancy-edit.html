@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html
         xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -8,64 +9,95 @@
 <body>
 <main>
     <section layout:fragment="body">
-        <a th:href="@{/job-vacancy}">Redirect</a>
-
         <div>
+            <div>
+                <p th:each="error : ${errors}" th:text="${error.defaultMessage}" class="invalid-login"></p>
+            </div>
+
             <form role="form" method="post" th:action="@{/job-vacancy/edit/{id}(id=${jobVacancyRequest.id})}" th:object="${jobVacancyRequest}">
-                <div>
+                <div class="login-username">
                     <label for="jobType">Job Type</label>
                     <input
                             type="text"
-                            class="form-control"
+                            class="login-username-input"
                             id="jobType"
                             name="jobType"
                             th:field="*{jobType}"
                             placeholder="Job Type">
                     <p th:if="${#fields.hasErrors('jobType')}" class="text-danger" th:errors="*{jobType}"></p>
                 </div>
-                <div>
-                    <label for="salary">Salary</label>
-                    <input
-                            type="text"
-                            class="form-control"
-                            id="salary"
-                            name="salary"
-                            th:field="*{salary}"
-                            placeholder="Salary">
-                    <p th:if="${#fields.hasErrors('salary')}" class="text-danger" th:errors="*{salary}"></p>
+                <div class="login-username">
+                <span>
+                <label for="salary">Salary</label>
+                <input
+                        type="number"
+                        class="salary-input"
+                        id="salary"
+                        name="salary"
+                        th:field="*{salary}"
+                        placeholder="Salary">
+                    <!--                <p th:if="${#fields.hasErrors('salary')}" class="text-danger" th:errors="*{salary}"></p>-->
+                <p th:if="${#fields.hasErrors('salary')}"></p>
+                <select
+                        class="currency-select"
+                        id="currency"
+                        th:field="*{currency}">
+                        <option value="USD">USD</option>
+                        <option value="BYN">BYN</option>
+                </select>
+                </span>
                 </div>
-                <div>
+                <div class="detail-container">
                     <label for="description">Description</label>
-                    <input
-                            type="text"
-                            class="form-control"
+                    <textarea
+                            type="textarea"
+                            class="detail-input"
                             id="description"
                             name="description"
                             th:field="*{description}"
                             placeholder="Description">
+                    </textarea>
                     <p th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></p>
                 </div>
 
-                <p>Skills</p>
-                <div id="skillContainer"></div>
-                <button id="btnAddSkill" type="button">Add Skill</button>
+                <div class="skill-detail-container">
+
+                </div>
+                <div class="skills">
+                    <p>Skills</p>
+                    <div th:each="skill, index : ${jobVacancyRequest.skills}">
+                        <input
+                                type="text"
+                                class="skill-input"
+                                th:field="*{skills[__${index.index}__].skill}"
+                                th:placeholder="'Skill ' + ${index.index + 1}"/>
+                    </div>
+
+                    <div id="skillContainer" class="skill-container"></div>
+                </div>
 
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script type="text/javascript">
                     $(document).ready(function() {
-                        var skillCount = 1;
+                        var skillCount = [[${jobVacancyRequest.skills.size}]] + 1;
 
                         $("#btnAddSkill").on("click", function() {
-                            var newSkillInput = $("<input>").attr("type", "text").attr("name", "skills[" + skillCount + "]");
-                            var newSkillError = $("<p>").addClass("text-danger").attr("th:if", "${#fields.hasErrors('skills[" + skillCount + "]')}")
-                                .attr("th:errors", "*{skills[" + skillCount + "]}");
+
+                            var newSkillInput = $("<input>").attr("type", "text")
+                                .attr("name", "skills[" + skillCount + "]")
+                                .addClass("skill-input")
+                                .attr("placeholder", "Skill " + skillCount);
+
                             $("#skillContainer").append(newSkillInput);
-                            $("#skillContainer").append(newSkillError);
                             skillCount++;
                         });
                     });
                 </script>
-                <button type="submit">Create</button>
+
+                <span class="register-login-block">
+                    <button id="btnAddSkill" type="button" class="add-skill-button">Add Skill</button>
+                    <button type="submit" class="create-button">Create</button>
+                </span>
             </form>
         </div>
     </section>

@@ -8,25 +8,26 @@
     <title>Resume List</title>
 </head>
 <body>
-    <section layout:fragment="body">
-        <div class="vacancy-container">
-            <div th:each="resume, index :${resumes}" class="vacancy-block">
-                <a th:href="@{/Resume/{id}(id=${resume.id})}" class="vacancy-detail-link">
-                    <div>
-                        <p th:text="${resume.jobType}" class="resume-text"></p>
-                    </div>
-                    <div>
-                        <p th:text="${resume.skills}" class="resume-text"></p>
-                    </div>
-                    <div>
-                        <p th:text="${resume.gitLink}" class="resume-text"></p>
-                    </div>
-<!--                <span>-->
-<!--                    <a th:href="@{/Resume/{id}(id=${resume.id})}">View</a>-->
-<!--                </span>-->
-                </a>
-            </div>
+<section layout:fragment="body">
+    <div class="vacancy-container">
+        <div th:each="resume, index :${resumes}" class="vacancy-block">
+            <a th:href="@{/Resume/{id}(id=${resume.id})}" class="vacancy-detail-link">
+                    <span>
+
+                        <div>
+                            <div>
+                                <p th:text="${resume.jobType}" class="vacancy-text"></p>
+                            </div>
+                            <div class="skill-detail-container">
+                                <div th:each="skill, status : ${resume.skills}" class="skill-detail" th:classappend="${#strings.endsWith(status.index, 2)} ? 'last-in-row' : ''">
+                                    <p th:text="${skill.skill}" class="skill-text"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+            </a>
         </div>
-    </section>
+    </div>
+</section>
 </body>
 </html>

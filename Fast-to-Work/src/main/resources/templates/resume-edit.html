@@ -8,57 +8,70 @@
 <body>
 <main>
     <section layout:fragment="body">
-        <a th:href="@{/Resume}">Redirect</a>
+        <div>
+            <p th:each="error : ${errors}" th:text="${error.defaultMessage}" class="invalid-login"></p>
+        </div>
 
         <div>
             <form role="form" method="post" th:action="@{/Resume/edit/{id}(id=${resume.id})}" th:object="${resume}">
-                <div>
+                <div class="login-username">
                     <label for="jobType">Job Type</label>
                     <input
                             type="text"
-                            class="form-control"
+                            class="login-username-input"
                             id="jobType"
                             name="jobType"
                             th:field="*{jobType}"
                             placeholder="Job Type">
                     <p th:if="${#fields.hasErrors('jobType')}" class="text-danger" th:errors="*{jobType}"></p>
                 </div>
-                <div>
-                    <label for="gitLink">Git Link</label>
-                    <input
-                            type="text"
-                            class="form-control"
-                            id="gitLink"
-                            name="gitLink"
-                            th:field="*{gitLink}"
-                            placeholder="Git Link">
-                    <p th:if="${#fields.hasErrors('gitLink')}" class="text-danger" th:errors="*{gitLink}"></p>
+                <div class="detail-container">
+                    <label for="description">Description</label>
+                    <textarea
+                            type="textarea"
+                            class="detail-input"
+                            id="description"
+                            name="description"
+                            th:field="*{description}"
+                            placeholder="Description">
+                    </textarea>
+                    <p th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></p>
                 </div>
 
-                <p>Skills</p>
-                <div id="skillContainer"></div>
-                <button id="btnAddSkill" type="button">Add Skill</button>
+                <div class="skills">
+                    <p>Skills</p>
+                    <div th:each="skill, index : ${resume.skills}">
+                        <input
+                                type="text"
+                                class="skill-input"
+                                th:field="*{skills[__${index.index}__].skill}"
+                                th:placeholder="'Skill ' + ${index.index + 1}"/>
+                    </div>
+
+                    <div id="skillContainer" class="skill-container"></div>
+                </div>
 
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script type="text/javascript">
                     $(document).ready(function() {
-                        var skillCount = 1;
+                        var skillCount = [[${resume.skills.size}]] + 1;
 
                         $("#btnAddSkill").on("click", function() {
                             var newSkillInput = $("<input>")
                                 .attr("type", "text")
-                                .attr("name", "skills[" + skillCount + "]");
-                            var newSkillError = $("<p>")
-                                .addClass("text-danger")
-                                .attr("th:if", "${#fields.hasErrors('skills[" + skillCount + "]')}")
-                                .attr("th:errors", "*{skills[" + skillCount + "]}");
+                                .attr("name", "skills[" + skillCount + "]")
+                                .addClass("skill-input")
+                                .attr("placeholder", "Skill " + skillCount);
+
                             $("#skillContainer").append(newSkillInput);
-                            $("#skillContainer").append(newSkillError);
                             skillCount++;
                         });
                     });
                 </script>
-                <button type="submit">Create</button>
+                <span class="register-login-block">
+                    <button id="btnAddSkill" type="button" class="add-skill-button">Add Skill</button>
+                    <button type="submit" class="create-button">Create</button>
+                </span>
             </form>
         </div>
     </section>

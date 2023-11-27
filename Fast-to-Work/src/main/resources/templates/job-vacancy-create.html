@@ -47,7 +47,7 @@
             <div class="detail-container">
                 <label for="description">Description</label>
                 <textarea
-                        type="textarea"
+                        type=""
                         class="detail-input"
                         id="description"
                         name="description"
@@ -73,10 +73,8 @@
                                                         .attr("name", "skills[" + skillCount + "]")
                                                         .addClass("skill-input")
                                                         .attr("placeholder", "Skill " + skillCount);
-                        var newSkillError = $("<p>").addClass("text-danger").attr("th:if", "${#fields.hasErrors('skills[" + skillCount + "]')}")
-                            .attr("th:errors", "*{skills[" + skillCount + "]}");
+
                         $("#skillContainer").append(newSkillInput);
-                        $("#skillContainer").append(newSkillError);
                         skillCount++;
                     });
                 });

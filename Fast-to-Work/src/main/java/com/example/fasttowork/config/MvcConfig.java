@@ -1,18 +1,14 @@
 package com.example.fasttowork.config;
 
 import com.example.fasttowork.entity.converter.SkillConverter;
-import com.example.fasttowork.validator.DtoValidator;
+import com.example.fasttowork.validator.JobVacancyValidator;
+import com.example.fasttowork.validator.ResumeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.Validator;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import javax.sql.DataSource;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
@@ -26,7 +22,12 @@ public class MvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Validator validator() {
-        return new DtoValidator();
+    public Validator validatorJobVacancy() {
+        return new JobVacancyValidator();
+    }
+
+    @Bean
+    public Validator validatorResumeValidator() {
+        return new ResumeValidator();
     }
 }

@@ -9,20 +9,41 @@
 </head>
 <body>
     <section layout:fragment="body">
-        <span>
-            <a th:href="@{/logout}">Logout</a>
-            <a th:href="@{/Resume}">Redirect</a>
-        </span>
-        <div th:each="jobVacancy, index :${jobVacancies}">
-            <div>
-                <a th:text="${jobVacancy.jobType}"></a>
+        <div class="vacancy-container">
+            <div th:each="jobVacancy, index :${jobVacancies}" class="vacancy-block">
+                <a th:href="@{/job-vacancy/{id}(id=${jobVacancy.id})}" class="vacancy-detail-link">
+                    <span>
+                        <div>
+                            <div>
+                                <p th:text="${jobVacancy.jobType}" class="vacancy-text"></p>
+                            </div>
+                            <div>
+                                <span>
+                                    <p th:text="${jobVacancy.salary} + ' ' + ${jobVacancy.currency}" class="vacancy-text"></p>
+                                </span>
+                            </div>
+                        </div>
+                    </span>
+                </a>
             </div>
-            <div>
-                <a th:text="${jobVacancy.salary}"></a>
-            </div>
-            <span>
-                <a th:href="@{/job-vacancy/{id}(id=${jobVacancy.id})}">View</a>
-            </span>
+        </div>
+
+        <div>
+            <form role="form" method="post" th:action="@{/job-vacancy/all}" th:object="${jobVacancySearchRequest}">
+                <div class="search-container">
+                    <p class="vacancy-text">Search</p>
+                    <div class="login-username">
+                        <label>Job Type</label>
+                        <input
+                                type="text"
+                                class="login-username-input"
+                                th:field="*{jobType}"
+                                placeholder="Job Type">
+                    </div>
+
+                    <button type="submit" class="create-button">Search</button>
+                </div>
+            </form>
         </div>
     </section>
 </body>

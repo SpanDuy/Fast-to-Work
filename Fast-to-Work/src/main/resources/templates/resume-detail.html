@@ -10,22 +10,32 @@
 <body>
 <!--    <a th:href="@{/Resume}">Redirect</a>-->
     <section layout:fragment="body">
-        <a th:href="@{${referrer}}">Redirect</a>
+        <div class="create-job-vacancy">
+            <a th:href="@{${referrer}}" class="create-job-vacancy-text">Redirect</a>
+        </div>
 
-        <p th:text="${resume.jobType}"></p>
-        <p th:text="${resume.name}"></p>
-        <p th:text="${resume.surname}"></p>
-        <p th:text="${resume.middleName}"></p>
-        <p th:text="${resume.birthday}"></p>
-        <p th:text="${resume.city}"></p>
-        <p th:text="${resume.gender}"></p>
-        <p th:text="${resume.phoneNumber}"></p>
-        <div th:each="skill : ${resume.skills}">
-            <div>
-                <span th:text="${skill.skill}"></span>
+        <div class="vacancy-detail-container">
+            <div class="jobVacancy-jobType">
+                <p th:text="${resume.jobType}"></p>
+            </div>
+            <div class="company-salary">
+                <p th:text="'Name: ' + ${resume.name}"></p>
+                <p th:text="'Surname: ' + ${resume.surname}"></p>
+                <p th:text="'Middle Name: ' + ${resume.middleName}"></p>
+                <p th:text="'Birthday: ' + ${#dates.format(resume.birthday, 'yyyy-MM-dd')}"></p>
+                <p th:text="'City: ' + ${resume.city}"></p>
+                <p th:text="'Gender: ' + ${resume.gender ? 'Male' : 'Female'}"></p>
+                <p th:text="'Phone Number: ' + ${resume.phoneNumber}"></p>
+            </div>
+            <div class="description">
+                <p th:text="'Description: ' + ${resume.description}"></p>
+            </div>
+            <div class="skill-detail-container">
+                <div th:each="skill, status : ${resume.skills}" class="skill-detail" th:classappend="${#strings.endsWith(status.index, 2)} ? 'last-in-row' : ''">
+                    <p th:text="${skill.skill}"></p>
+                </div>
             </div>
         </div>
-        <p th:text="${resume.gitLink}"></p>
     </section>
 </body>
 </html>

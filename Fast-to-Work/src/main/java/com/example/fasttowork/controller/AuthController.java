@@ -1,6 +1,5 @@
 package com.example.fasttowork.controller;
 
-import com.example.fasttowork.entity.Employee;
 import com.example.fasttowork.entity.Role;
 import com.example.fasttowork.entity.UserEntity;
 import com.example.fasttowork.payload.request.RegistrationEmployeeDto;
@@ -109,7 +108,7 @@ public class AuthController {
 
     @GetMapping("/")
     public String redirect() {
-        String username = SecurityUtil.getSessionUser();
+        String username = SecurityUtil.getSessionUserEmail();
         UserEntity user = userService.findByEmail(username);
 
         List<Role> roles = user.getRoles();
@@ -125,7 +124,7 @@ public class AuthController {
 
     @GetMapping("/all")
     public String redirectToResumeOrVacancy() {
-        String username = SecurityUtil.getSessionUser();
+        String username = SecurityUtil.getSessionUserEmail();
         UserEntity user = userService.findByEmail(username);
 
         List<Role> roles = user.getRoles();

@@ -388,6 +388,9 @@
 .jobVacancy-jobType {
     font-size: 32px;
     text-align: center;
+    white-space: nowrap; /* Предотвращает перенос строк */
+    overflow: hidden;    /* Скрывает все, что выходит за границы блока */
+    text-overflow: ellipsis; /* Добавляет многоточие (...) для обозначения обрезанного текста */
 }
 
 .company-salary {
@@ -414,6 +417,44 @@
     margin-bottom: 10px; /* Расстояние между строками */
 }
 
+.skill-text {
+    text-decoration: none;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 20px;
+    color: black;
+}
+
 .last-in-row {
     margin-right: 0; /* Убираем правый margin у последнего элемента в строке */
+}
+
+.user-information-container {
+    position: relative;
+    margin: 10px;
+    padding: 10px;
+    height: 100px;
+    width: 400px;
+}
+
+.user-icon {
+    font-size: 100px;
+}
+
+.user-information {
+    position: absolute;
+    left: 130px;
+    top: 50px;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 28px;
+    white-space: nowrap; /* Предотвращает перенос строк */
+    overflow: hidden;    /* Скрывает все, что выходит за границы блока */
+    text-overflow: ellipsis; /* Добавляет многоточие (...) для обозначения обрезанного текста */
+}
+
+.search-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 450px;
+    background-color: #38B2CF;
 }

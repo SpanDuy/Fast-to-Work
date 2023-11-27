@@ -4,11 +4,10 @@ import com.example.fasttowork.payload.request.JobVacancyRequest;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
-public class DtoValidator implements Validator {
+public class JobVacancyValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {

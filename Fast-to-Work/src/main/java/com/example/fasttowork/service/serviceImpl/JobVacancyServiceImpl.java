@@ -3,20 +3,27 @@ package com.example.fasttowork.service.serviceImpl;
 import com.example.fasttowork.entity.*;
 import com.example.fasttowork.exception.BadRequestException;
 import com.example.fasttowork.payload.request.JobVacancyRequest;
-import com.example.fasttowork.repository.EmployeeRepository;
+import com.example.fasttowork.payload.request.JobVacancySearchRequest;
 import com.example.fasttowork.repository.EmployerRepository;
 import com.example.fasttowork.repository.JobVacancyRepository;
-import com.example.fasttowork.repository.ResumeRepository;
 import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.JobVacancyService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Currency;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JobVacancyServiceImpl implements JobVacancyService {
+    @Autowired
+    private EntityManager entityManager;
+
     @Autowired
     private JobVacancyRepository jobVacancyRepository;
 
@@ -32,7 +39,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
     @Override
     public List<JobVacancy> findAllJobVacancy() {
-        String username = SecurityUtil.getSessionUser();
+        String username = SecurityUtil.getSessionUserEmail();
         UserEntity user = employerRepository.findByEmail(username);
 
         List<JobVacancy> jobVacancies = jobVacancyRepository.findByEmployerId(user.getId());
@@ -51,7 +58,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
     @Override
     public JobVacancy createJobVacancy(JobVacancyRequest jobVacancyRequest, Long userId) {
-        String username = SecurityUtil.getSessionUser();
+        String username = SecurityUtil.getSessionUserEmail();
         Employer employer = employerRepository.findByEmail(username);
 
         JobVacancy jobVacancy = new JobVacancy();
@@ -63,6 +70,9 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         jobVacancy.setSalary(jobVacancyRequest.getSalary());
         jobVacancy.setCurrency(jobVacancyRequest.getCurrency());
         jobVacancy.setDescription(jobVacancyRequest.getDescription());
+        jobVacancyRequest.setSkills(jobVacancyRequest.getSkills().stream()
+                .filter(item -> item != null && item.getSkill() != "")
+                .collect(Collectors.toList()));
         jobVacancy.setSkills(jobVacancyRequest.getSkills());
 
         jobVacancyRepository.save(jobVacancy);
@@ -82,15 +92,52 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         jobVacancy.setSalary(jobVacancyRequest.getSalary());
         jobVacancy.setCurrency(jobVacancy.getCurrency());
         jobVacancy.setDescription(jobVacancyRequest.getDescription());
+
+        jobVacancyRequest.setSkills(jobVacancyRequest.getSkills().stream()
+                .filter(item -> item != null && item.getSkill() != "")
+                .collect(Collectors.toList()));
         jobVacancy.setSkills(jobVacancyRequest.getSkills());
 
         jobVacancyRepository.save(jobVacancy);
     }
-
 
     @Override
     public void deleteJobVacancy(Long userId, Long id) {
         jobVacancyRepository.deleteById(id);
     }
 
+    @Override
+    public List<JobVacancy> searchJobVacancy(JobVacancySearchRequest jobVacancySearchRequest) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<JobVacancy> criteriaQuery = criteriaBuilder.createQuery(JobVacancy.class);
+        Root<JobVacancy> root = criteriaQuery.from(JobVacancy.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (StringUtils.isNotBlank(jobVacancySearchRequest.getJobType())) {
+            predicates.add(criteriaBuilder.equal(root.get("jobType"), jobVacancySearchRequest.getJobType()));
+        }
+
+        if (jobVacancySearchRequest.getSalaryMin() != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("salary"), jobVacancySearchRequest.getSalaryMin()));
+        }
+
+        if (jobVacancySearchRequest.getSalaryMax() != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("salary"), jobVacancySearchRequest.getSalaryMax()));
+        }
+
+        if (StringUtils.isNotBlank(jobVacancySearchRequest.getCurrency())) {
+            predicates.add(criteriaBuilder.equal(root.get("currency"), jobVacancySearchRequest.getCurrency()));
+        }
+
+        if (jobVacancySearchRequest.getSkills() != null) {
+            Join<JobVacancy, Skill> skillJoin = root.join("skills");
+            predicates.add(criteriaBuilder.in(skillJoin.get("skill")).value(jobVacancySearchRequest.getSkills()));
+        }
+
+        criteriaQuery.where(predicates.toArray(new Predicate[0]));
+
+        TypedQuery<JobVacancy> typedQuery = entityManager.createQuery(criteriaQuery);
+        return typedQuery.getResultList();
+    }
 }

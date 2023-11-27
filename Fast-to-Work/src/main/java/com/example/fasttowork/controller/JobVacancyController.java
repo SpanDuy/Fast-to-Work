@@ -1,12 +1,13 @@
 package com.example.fasttowork.controller;
 
 import com.example.fasttowork.entity.JobVacancy;
-import com.example.fasttowork.entity.Resume;
+import com.example.fasttowork.entity.Skill;
 import com.example.fasttowork.entity.converter.SkillConverter;
 import com.example.fasttowork.payload.request.JobVacancyRequest;
-import com.example.fasttowork.payload.request.ResumeRequest;
+import com.example.fasttowork.payload.request.JobVacancySearchRequest;
+import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.JobVacancyService;
-import com.example.fasttowork.validator.DtoValidator;
+import com.example.fasttowork.validator.JobVacancyValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -26,21 +26,49 @@ public class JobVacancyController {
 
     private SkillConverter skillConverter;
 
-    private DtoValidator dtoValidator;
+    private JobVacancyValidator jobVacancyValidator;
 
     @Autowired
     public JobVacancyController(JobVacancyService jobVacancyService,
                                 SkillConverter skillConverter,
-                                DtoValidator dtoValidator) {
+                                JobVacancyValidator jobVacancyValidator) {
         this.jobVacancyService = jobVacancyService;
         this.skillConverter = skillConverter;
-        this.dtoValidator = dtoValidator;
+        this.jobVacancyValidator = jobVacancyValidator;
     }
+
+//    @GetMapping("/job-vacancy/all")
+//    public String getAllJobVacancy(Model model) {
+//        List<JobVacancy> jobVacancies = jobVacancyService.getAllJobVacancy();
+//
+//        model.addAttribute("jobVacancies", jobVacancies);
+//
+//        return "job-vacancy-all";
+//    }
 
     @GetMapping("/job-vacancy/all")
     public String getAllJobVacancy(Model model) {
+        JobVacancySearchRequest jobVacancySearchRequest = new JobVacancySearchRequest();
         List<JobVacancy> jobVacancies = jobVacancyService.getAllJobVacancy();
 
+        model.addAttribute("jobVacancySearchRequest", jobVacancySearchRequest);
+        model.addAttribute("jobVacancies", jobVacancies); // Используем "resume" вместо "resumeRequest"
+        return "job-vacancy-all";
+    }
+
+    @PostMapping("/job-vacancy/all")
+    public String getAllJobVacancy(@ModelAttribute("resume") JobVacancySearchRequest jobVacancySearchRequest,
+                                          BindingResult result,
+                                          Model model) {
+        if(result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
+            model.addAttribute("jobVacancySearchRequest", jobVacancySearchRequest);
+            return "job-vacancy-all";
+        }
+
+        List<JobVacancy> jobVacancies = jobVacancyService.searchJobVacancy(jobVacancySearchRequest);
+
+        model.addAttribute("jobVacancySearchRequest", jobVacancySearchRequest);
         model.addAttribute("jobVacancies", jobVacancies);
 
         return "job-vacancy-all";
@@ -49,7 +77,9 @@ public class JobVacancyController {
     @GetMapping("/job-vacancy")
     public String findAllJobVacancy(Model model) {
         List<JobVacancy> jobVacancies = jobVacancyService.findAllJobVacancy();
+        String email = SecurityUtil.getSessionUserEmail();
 
+        model.addAttribute("email", email);
         model.addAttribute("jobVacancies", jobVacancies);
 
         return "job-vacancy-list";
@@ -77,7 +107,7 @@ public class JobVacancyController {
     public String createJobVacancyRequest(@ModelAttribute("resume") JobVacancyRequest jobVacancyRequest,
                                           BindingResult result,
                                           Model model) {
-        dtoValidator.validate(jobVacancyRequest, result);
+        jobVacancyValidator.validate(jobVacancyRequest, result);
 
         if(result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
@@ -104,6 +134,7 @@ public class JobVacancyController {
                 .currency(jobVacancy.getCurrency())
                 .build();
 
+        model.addAttribute("size", jobVacancyRequest.getSkills().size());
         model.addAttribute("jobVacancyRequest", jobVacancyRequest); // Используем "resume" вместо "resumeRequest"
         return "job-vacancy-edit";
     }
@@ -113,8 +144,17 @@ public class JobVacancyController {
                              @ModelAttribute("jobVacancyRequest") JobVacancyRequest jobVacancyRequest,
                              BindingResult result,
                              Model model) {
+        jobVacancyValidator.validate(jobVacancyRequest, result);
+
         if(result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
+            model.addAttribute("skillList", jobVacancyRequest.getSkills());
             model.addAttribute("jobVacancyRequest", jobVacancyRequest);
+
+//            for (Skill skill : jobVacancyRequest.getSkills()) {
+//
+//            }
+
             return "job-vacancy-edit";
         }
 

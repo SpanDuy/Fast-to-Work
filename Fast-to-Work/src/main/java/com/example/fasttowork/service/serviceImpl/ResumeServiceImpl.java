@@ -32,7 +32,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<Resume> findAllResumes() {
-        String username = SecurityUtil.getSessionUser();
+        String username = SecurityUtil.getSessionUserEmail();
         UserEntity user = employeeRepository.findByEmail(username);
 
         List<Resume> resumes = resumeRepository.findByEmployeeId(user.getId());
@@ -51,7 +51,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public Resume createResume(ResumeRequest resumeRequest, Long userId) {
-        String username = SecurityUtil.getSessionUser();
+        String username = SecurityUtil.getSessionUserEmail();
         Employee employee = employeeRepository.findByEmail(username);
 
         Resume resume = new Resume();
@@ -66,7 +66,7 @@ public class ResumeServiceImpl implements ResumeService {
         resume.setGender(employee.getGender());
         resume.setPhoneNumber(employee.getPhoneNumber());
         resume.setSkills(resumeRequest.getSkills());
-        resume.setGitLink(resumeRequest.getGitLink());
+        resume.setDescription(resumeRequest.getDescription());
 
         resumeRepository.save(resume);
 
@@ -82,7 +82,7 @@ public class ResumeServiceImpl implements ResumeService {
                 .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
 
         resume.setJobType(resumeRequest.getJobType());
-        resume.setGitLink(resumeRequest.getGitLink());
+        resume.setDescription(resumeRequest.getDescription());
         resume.setSkills(resumeRequest.getSkills());
 
         resumeRepository.save(resume);

@@ -5,20 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResumeRequest {
-
-    private Long id;
+public class JobVacancySearchRequest {
     private String jobType;
+    private Integer salaryMin;
+    private Integer salaryMax;
+    private String currency;
     private List<Skill> skills;
-    private String description;
 }

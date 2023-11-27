@@ -3,7 +3,9 @@ package com.example.fasttowork.controller;
 import com.example.fasttowork.entity.Resume;
 import com.example.fasttowork.entity.converter.SkillConverter;
 import com.example.fasttowork.payload.request.ResumeRequest;
+import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.ResumeService;
+import com.example.fasttowork.validator.ResumeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +24,15 @@ public class ResumeController {
 
     private SkillConverter skillConverter;
 
+    private ResumeValidator resumeValidator;
+
     @Autowired
-    public ResumeController(ResumeService resumeService, SkillConverter skillConverter) {
+    public ResumeController(ResumeService resumeService,
+                            SkillConverter skillConverter,
+                            ResumeValidator resumeValidator) {
         this.resumeService = resumeService;
         this.skillConverter = skillConverter;
+        this.resumeValidator = resumeValidator;
     }
 
     @GetMapping("/Resume/all")
@@ -40,7 +47,9 @@ public class ResumeController {
     @GetMapping("/Resume")
     public String findAllResume(Model model) {
         List<Resume> resumes = resumeService.findAllResumes();
+        String email = SecurityUtil.getSessionUserEmail();
 
+        model.addAttribute("email", email);
         model.addAttribute("resumes", resumes);
 
         return "resume-list";
@@ -66,8 +75,13 @@ public class ResumeController {
     }
 
     @PostMapping("/Resume/new")
-    public String createResume(@ModelAttribute("resume") ResumeRequest resumeRequest, BindingResult result, Model model) {
+    public String createResume(@ModelAttribute("resume") ResumeRequest resumeRequest,
+                               BindingResult result,
+                               Model model) {
+        resumeValidator.validate(resumeRequest, result);
+
         if(result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("resume", resumeRequest);
             return "resume-create";
         }
@@ -85,7 +99,7 @@ public class ResumeController {
         ResumeRequest resumeRequest = ResumeRequest.builder()
                 .id(resume.getId())
                 .jobType(resume.getJobType())
-                .gitLink(resume.getGitLink())
+                .description(resume.getDescription())
                 .skills(resume.getSkills())
                 .build();
 

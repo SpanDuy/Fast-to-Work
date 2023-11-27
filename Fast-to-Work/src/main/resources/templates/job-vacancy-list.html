@@ -10,6 +10,16 @@
 <body>
 <main class="flex-shrink-0">
     <section layout:fragment="body">
+
+        <div class="user-information-container">
+            <div class="user-icon">
+                <i class="fi fi-rr-circle-user"></i>
+            </div>
+            <div class="user-information">
+                <div th:text="${email}"></div>
+            </div>
+        </div>
+
         <div class="create-job-vacancy">
             <a th:href="@{/job-vacancy/new}" class="create-job-vacancy-text">Create Job Vacancy</a>
         </div>
