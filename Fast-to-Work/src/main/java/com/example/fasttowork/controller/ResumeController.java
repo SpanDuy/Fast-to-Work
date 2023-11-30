@@ -1,8 +1,11 @@
 package com.example.fasttowork.controller;
 
+import com.example.fasttowork.entity.JobVacancy;
 import com.example.fasttowork.entity.Resume;
 import com.example.fasttowork.entity.converter.SkillConverter;
+import com.example.fasttowork.payload.request.JobVacancySearchRequest;
 import com.example.fasttowork.payload.request.ResumeRequest;
+import com.example.fasttowork.payload.request.ResumeSearchRequest;
 import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.ResumeService;
 import com.example.fasttowork.validator.ResumeValidator;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -35,10 +39,44 @@ public class ResumeController {
         this.resumeValidator = resumeValidator;
     }
 
+//    @GetMapping("/Resume/all")
+//    public String getAllResume(Model model) {
+//        List<Resume> resumes = resumeService.getAllResumes();
+//
+//        model.addAttribute("resumes", resumes);
+//
+//        return "resume-all";
+//    }
+
     @GetMapping("/Resume/all")
-    public String getAllResume(Model model) {
+    public String getAllResume(Model model,
+                               HttpServletResponse response) {
+        ResumeSearchRequest resumeSearchRequest = new ResumeSearchRequest();
         List<Resume> resumes = resumeService.getAllResumes();
 
+        response.setHeader("Cache-Control", "public, max-age=3600");
+
+        model.addAttribute("resumeSearchRequest", resumeSearchRequest);
+        model.addAttribute("resumes", resumes);
+        return "resume-all";
+    }
+
+    @PostMapping("/Resume/all")
+    public String getAllResume(@ModelAttribute("resume") ResumeSearchRequest resumeSearchRequest,
+                                   BindingResult result,
+                                   Model model,
+                                   HttpServletResponse response) {
+        if(result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
+            model.addAttribute("resumeSearchRequest", resumeSearchRequest);
+            return "resume-all";
+        }
+
+        List<Resume> resumes = resumeService.searchResume(resumeSearchRequest);
+
+        response.setHeader("Cache-Control", "public, max-age=3600");
+
+        model.addAttribute("resumeSearchRequest", resumeSearchRequest);
         model.addAttribute("resumes", resumes);
 
         return "resume-all";

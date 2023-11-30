@@ -6,18 +6,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JobVacancySearchRequest {
+public class ResumeSearchRequest {
     private String jobType;
-    private Integer salaryMin;
-    private Integer salaryMax;
-    private String currencyMin;
-    private String currencyMax;
+    private Integer ageMin;
+    private Integer ageMax;
+    private String city;
     private List<Skill> skills;
 }

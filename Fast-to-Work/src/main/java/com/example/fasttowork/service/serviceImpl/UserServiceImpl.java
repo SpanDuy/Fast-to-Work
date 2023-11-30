@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import com.example.fasttowork.entity.Role;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Arrays;
 
 @Service
@@ -72,7 +74,9 @@ public class UserServiceImpl implements UserService {
         employee.setName(registrationDto.getName());
         employee.setSurname(registrationDto.getSurname());
         employee.setMiddleName(registrationDto.getMiddleName());
-        employee.setBirthday(registrationDto.getBirthday());
+        employee.setBirthday(Instant.ofEpochMilli(registrationDto.getBirthday().getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime());
         employee.setCity(registrationDto.getCity());
         employee.setGender(registrationDto.getGender());
         employee.setPhoneNumber(registrationDto.getPhoneNumber());

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class Resume {
     private String middleName;
 
     @Column(name = "birthday")
-    private Date birthday;
+    private LocalDateTime birthday;
 
     @Column(name = "city")
     private String city;

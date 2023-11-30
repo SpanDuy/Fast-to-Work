@@ -10,6 +10,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,7 @@ public class Employee extends UserEntity {
     private String name;
     private String surname;
     private String middleName;
-    private Date birthday;
+    private LocalDateTime birthday;
     private String city;
     private Boolean gender;
     private String phoneNumber;

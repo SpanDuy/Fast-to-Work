@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -37,29 +38,24 @@ public class JobVacancyController {
         this.jobVacancyValidator = jobVacancyValidator;
     }
 
-//    @GetMapping("/job-vacancy/all")
-//    public String getAllJobVacancy(Model model) {
-//        List<JobVacancy> jobVacancies = jobVacancyService.getAllJobVacancy();
-//
-//        model.addAttribute("jobVacancies", jobVacancies);
-//
-//        return "job-vacancy-all";
-//    }
-
     @GetMapping("/job-vacancy/all")
-    public String getAllJobVacancy(Model model) {
+    public String getAllJobVacancy(Model model,
+                                   HttpServletResponse response) {
         JobVacancySearchRequest jobVacancySearchRequest = new JobVacancySearchRequest();
         List<JobVacancy> jobVacancies = jobVacancyService.getAllJobVacancy();
 
+        response.setHeader("Cache-Control", "public, max-age=3600");
+
         model.addAttribute("jobVacancySearchRequest", jobVacancySearchRequest);
-        model.addAttribute("jobVacancies", jobVacancies); // Используем "resume" вместо "resumeRequest"
+        model.addAttribute("jobVacancies", jobVacancies);
         return "job-vacancy-all";
     }
 
     @PostMapping("/job-vacancy/all")
     public String getAllJobVacancy(@ModelAttribute("resume") JobVacancySearchRequest jobVacancySearchRequest,
-                                          BindingResult result,
-                                          Model model) {
+                                   BindingResult result,
+                                   Model model,
+                                   HttpServletResponse response) {
         if(result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("jobVacancySearchRequest", jobVacancySearchRequest);
@@ -68,8 +64,11 @@ public class JobVacancyController {
 
         List<JobVacancy> jobVacancies = jobVacancyService.searchJobVacancy(jobVacancySearchRequest);
 
+        response.setHeader("Cache-Control", "public, max-age=3600");
+
         model.addAttribute("jobVacancySearchRequest", jobVacancySearchRequest);
         model.addAttribute("jobVacancies", jobVacancies);
+
 
         return "job-vacancy-all";
     }

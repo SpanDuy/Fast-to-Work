@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Currency;
 import java.util.List;
 
@@ -24,5 +25,6 @@ public class JobVacancyRequest {
     private String currency;
     @NotEmpty
     private String description;
+    @NotNull
     private List<Skill> skills;
 }

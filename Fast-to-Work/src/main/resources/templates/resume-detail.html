@@ -22,7 +22,7 @@
                 <p th:text="'Name: ' + ${resume.name}"></p>
                 <p th:text="'Surname: ' + ${resume.surname}"></p>
                 <p th:text="'Middle Name: ' + ${resume.middleName}"></p>
-                <p th:text="'Birthday: ' + ${#dates.format(resume.birthday, 'yyyy-MM-dd')}"></p>
+                <p th:text="'Birthday: ' + ${#temporals.format(resume.birthday, 'yyyy-MM-dd')}"></p>
                 <p th:text="'City: ' + ${resume.city}"></p>
                 <p th:text="'Gender: ' + ${resume.gender ? 'Male' : 'Female'}"></p>
                 <p th:text="'Phone Number: ' + ${resume.phoneNumber}"></p>

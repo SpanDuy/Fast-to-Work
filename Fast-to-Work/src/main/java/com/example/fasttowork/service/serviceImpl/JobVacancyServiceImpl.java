@@ -70,9 +70,11 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         jobVacancy.setSalary(jobVacancyRequest.getSalary());
         jobVacancy.setCurrency(jobVacancyRequest.getCurrency());
         jobVacancy.setDescription(jobVacancyRequest.getDescription());
-        jobVacancyRequest.setSkills(jobVacancyRequest.getSkills().stream()
-                .filter(item -> item != null && item.getSkill() != "")
-                .collect(Collectors.toList()));
+        if (jobVacancyRequest.getSkills() != null) {
+            jobVacancyRequest.setSkills(jobVacancyRequest.getSkills().stream()
+                    .filter(item -> item != null && item.getSkill() != "")
+                    .collect(Collectors.toList()));
+        }
         jobVacancy.setSkills(jobVacancyRequest.getSkills());
 
         jobVacancyRepository.save(jobVacancy);
@@ -126,13 +128,30 @@ public class JobVacancyServiceImpl implements JobVacancyService {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("salary"), jobVacancySearchRequest.getSalaryMax()));
         }
 
-        if (StringUtils.isNotBlank(jobVacancySearchRequest.getCurrency())) {
-            predicates.add(criteriaBuilder.equal(root.get("currency"), jobVacancySearchRequest.getCurrency()));
+        if (jobVacancySearchRequest.getSkills() != null) {
+            jobVacancySearchRequest.setSkills(jobVacancySearchRequest.getSkills().stream()
+                    .filter(item -> item != null && item.getSkill() != "")
+                    .collect(Collectors.toList()));
         }
 
-        if (jobVacancySearchRequest.getSkills() != null) {
+        if (jobVacancySearchRequest.getSkills() != null && jobVacancySearchRequest.getSkills().size() > 0) {
             Join<JobVacancy, Skill> skillJoin = root.join("skills");
-            predicates.add(criteriaBuilder.in(skillJoin.get("skill")).value(jobVacancySearchRequest.getSkills()));
+            List<String> skillNames = jobVacancySearchRequest.getSkills().stream()
+                    .map(Skill::getSkill)
+                    .collect(Collectors.toList());
+
+            predicates.add(skillJoin.get("skill").in(skillNames));
+
+            if (jobVacancySearchRequest.getSkills().size() > 1) {
+                criteriaQuery.groupBy(root.get("id"));
+
+                criteriaQuery.having(
+                        criteriaBuilder.equal(
+                                criteriaBuilder.countDistinct(skillJoin.get("skill")),
+                                jobVacancySearchRequest.getSkills().size()
+                        )
+                );
+            }
         }
 
         criteriaQuery.where(predicates.toArray(new Predicate[0]));

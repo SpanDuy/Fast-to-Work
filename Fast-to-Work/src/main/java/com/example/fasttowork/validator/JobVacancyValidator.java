@@ -29,5 +29,9 @@ public class JobVacancyValidator implements Validator {
         if (jobVacancyRequest.getDescription() == "") {
             errors.rejectValue("Description", "field.required", "Description is empty");
         }
+
+        if (jobVacancyRequest.getSkills() == null) {
+            errors.rejectValue("Description", "field.required", "Skills is empty");
+        }
     }
 }

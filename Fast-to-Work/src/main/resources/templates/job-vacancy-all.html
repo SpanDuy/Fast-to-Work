@@ -28,9 +28,9 @@
             </div>
         </div>
 
-        <div>
+        <div class="search-container">
             <form role="form" method="post" th:action="@{/job-vacancy/all}" th:object="${jobVacancySearchRequest}">
-                <div class="search-container">
+                <div >
                     <p class="vacancy-text">Search</p>
                     <div class="login-username">
                         <label>Job Type</label>
@@ -41,7 +41,80 @@
                                 placeholder="Job Type">
                     </div>
 
-                    <button type="submit" class="create-button">Search</button>
+                    <div class="login-username">
+                        <span>
+                        <label for="salaryMin">Salary Min</label>
+                        <input
+                                type="number"
+                                class="salary-input"
+                                id="salaryMin"
+                                name="salary"
+                                th:field="*{salaryMin}"
+                                placeholder="Salary Min">
+                        <select
+                                class="currency-select"
+                                id="currencyMin"
+                                th:field="*{currencyMin}">
+                                <option value="USD">USD</option>
+                                <option value="BYN">BYN</option>
+                        </select>
+                        </span>
+                    </div>
+
+                    <div class="login-username">
+                        <span>
+                        <label for="salaryMax">Salary Max</label>
+                        <input
+                                type="number"
+                                class="salary-input"
+                                id="salaryMax"
+                                name="salaryMax"
+                                th:field="*{salaryMax}"
+                                placeholder="Salary Max">
+                        <select
+                                class="currency-select"
+                                id="currencyMax"
+                                th:field="*{currencyMax}">
+                                <option value="USD">USD</option>
+                                <option value="BYN">BYN</option>
+                        </select>
+                        </span>
+                    </div>
+
+                    <div class="skills">
+                        <p>Skills</p>
+                        <div th:each="skill, index : ${jobVacancySearchRequest.skills}">
+                            <input
+                                    type="text"
+                                    class="skill-input"
+                                    th:field="*{skills[__${index.index}__].skill}"
+                                    th:placeholder="'Skill ' + ${index.index + 1}"/>
+                        </div>
+
+                        <div id="skillContainer" class="skill-container"></div>
+                    </div>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            var skillCount = [[${jobVacancySearchRequest.skills != null ? jobVacancySearchRequest.skills.size : 0}]] + 1;
+
+                            $("#btnAddSkill").on("click", function() {
+                                var newSkillInput = $("<input>").attr("type", "text")
+                                    .attr("name", "skills[" + (skillCount - 1) + "]")
+                                    .addClass("skill-input")
+                                    .attr("placeholder", "Skill " + skillCount);
+
+                                $("#skillContainer").append(newSkillInput);
+                                skillCount++;
+                            });
+                        });
+                    </script>
+
+                    <span class="search-button-container">
+                        <button type="submit" class="search-button">Search</button>
+                        <button id="btnAddSkill" type="button" class="add-skill-search-button">Add Skill</button>
+                    </span>
                 </div>
             </form>
         </div>
