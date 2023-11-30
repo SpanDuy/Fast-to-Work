@@ -7,6 +7,7 @@ import com.example.fasttowork.payload.request.JobVacancySearchRequest;
 import com.example.fasttowork.repository.EmployerRepository;
 import com.example.fasttowork.repository.JobVacancyRepository;
 import com.example.fasttowork.security.SecurityUtil;
+import com.example.fasttowork.service.CurrencyService;
 import com.example.fasttowork.service.JobVacancyService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +31,9 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
     @Autowired
     private EmployerRepository employerRepository;
+
+    @Autowired
+    private CurrencyService currencyService;
 
     @Override
     public List<JobVacancy> getAllJobVacancy() {
@@ -113,6 +118,13 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<JobVacancy> criteriaQuery = criteriaBuilder.createQuery(JobVacancy.class);
         Root<JobVacancy> root = criteriaQuery.from(JobVacancy.class);
+        Double currentOfficialRate = currencyService.getCurrentOfficialRate();
+        Expression<Double> adjustedSalaryExpression = (Expression<Double>) criteriaBuilder.selectCase()
+                .when(criteriaBuilder.equal(root.get("currency"), "BYN"),
+                        criteriaBuilder.quot(root.get("salary"), currentOfficialRate))
+                .otherwise(root.get("salary"))
+                .as(Double.class)
+                .alias("adjustedSalary");
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -121,20 +133,26 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         }
 
         if (jobVacancySearchRequest.getSalaryMin() != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("salary"), jobVacancySearchRequest.getSalaryMin()));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(adjustedSalaryExpression,
+                    jobVacancySearchRequest.getCurrencyMin().equals("BYN") ?
+                            jobVacancySearchRequest.getSalaryMin().doubleValue() / currentOfficialRate :
+                            jobVacancySearchRequest.getSalaryMin().doubleValue()));
         }
 
         if (jobVacancySearchRequest.getSalaryMax() != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("salary"), jobVacancySearchRequest.getSalaryMax()));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(adjustedSalaryExpression,
+                    jobVacancySearchRequest.getCurrencyMax().equals("BYN") ?
+                            jobVacancySearchRequest.getSalaryMax().doubleValue() / currentOfficialRate :
+                            jobVacancySearchRequest.getSalaryMax().doubleValue()));
         }
 
         if (jobVacancySearchRequest.getSkills() != null) {
             jobVacancySearchRequest.setSkills(jobVacancySearchRequest.getSkills().stream()
-                    .filter(item -> item != null && item.getSkill() != "")
+                    .filter(item -> item != null && !item.getSkill().isEmpty())
                     .collect(Collectors.toList()));
         }
 
-        if (jobVacancySearchRequest.getSkills() != null && jobVacancySearchRequest.getSkills().size() > 0) {
+        if (jobVacancySearchRequest.getSkills() != null && !jobVacancySearchRequest.getSkills().isEmpty()) {
             Join<JobVacancy, Skill> skillJoin = root.join("skills");
             List<String> skillNames = jobVacancySearchRequest.getSkills().stream()
                     .map(Skill::getSkill)

@@ -123,8 +123,6 @@ public class ResumeServiceImpl implements ResumeService {
         }
 
         predicates.add(criteriaBuilder.between(root.get("birthday"), ageMax, ageMin));
-        // predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("birthday"), ageMin));
-        // predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("birthday"), ageMax));
 
         if (StringUtils.isNotBlank(resumeSearchRequest.getJobType())) {
             predicates.add(criteriaBuilder.equal(root.get("jobType"), resumeSearchRequest.getJobType()));
