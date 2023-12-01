@@ -18,7 +18,7 @@
     <ul class="navigation">
         <a th:href="@{/logout}" class="navigation-icon"><i class="fi fi-rs-sign-out-alt"></i></a>
         <a sec:authorize="isAuthenticated()" href="/all" class="navigation-icon"><i class="fi fi-rr-search"></i></a>
-        <a href="#" class="navigation-icon"><i class="fi fi-rr-messages"></i></a>
+<!--        <a href="#" class="navigation-icon"><i class="fi fi-rr-messages"></i></a>-->
         <a sec:authorize="isAuthenticated()" href="/" class="navigation-icon"><i class="fi fi-rr-circle-user"></i></a>
     </ul>
 </nav>

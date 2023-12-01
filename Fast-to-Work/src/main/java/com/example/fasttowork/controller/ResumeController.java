@@ -30,6 +30,8 @@ public class ResumeController {
 
     private ResumeValidator resumeValidator;
 
+    private SecurityUtil securityUtil =  new SecurityUtil();
+
     @Autowired
     public ResumeController(ResumeService resumeService,
                             SkillConverter skillConverter,
@@ -85,7 +87,7 @@ public class ResumeController {
     @GetMapping("/Resume")
     public String findAllResume(Model model) {
         List<Resume> resumes = resumeService.findAllResumes();
-        String email = SecurityUtil.getSessionUserEmail();
+        String email = securityUtil.getSessionUserEmail();
 
         model.addAttribute("email", email);
         model.addAttribute("resumes", resumes);

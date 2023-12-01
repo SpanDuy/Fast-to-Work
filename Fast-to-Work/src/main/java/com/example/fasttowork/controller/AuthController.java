@@ -20,6 +20,8 @@ import java.util.List;
 public class AuthController {
     private UserService userService;
 
+    private SecurityUtil securityUtil =  new SecurityUtil();
+
     public AuthController(UserService userService) {
         this.userService = userService;
     }
@@ -108,7 +110,7 @@ public class AuthController {
 
     @GetMapping("/")
     public String redirect() {
-        String username = SecurityUtil.getSessionUserEmail();
+        String username = securityUtil.getSessionUserEmail();
         UserEntity user = userService.findByEmail(username);
 
         List<Role> roles = user.getRoles();
@@ -124,7 +126,7 @@ public class AuthController {
 
     @GetMapping("/all")
     public String redirectToResumeOrVacancy() {
-        String username = SecurityUtil.getSessionUserEmail();
+        String username = securityUtil.getSessionUserEmail();
         UserEntity user = userService.findByEmail(username);
 
         List<Role> roles = user.getRoles();

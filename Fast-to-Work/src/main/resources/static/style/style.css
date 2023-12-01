@@ -88,6 +88,8 @@
     margin: 10px;
     width: 220px;
     text-align: center;
+
+    transition: transform 500ms ease;
 }
 
 .create-job-vacancy-text {
@@ -97,6 +99,8 @@
     color: black;
     font-family: "Itim", Arial, sans-serif;
     font-size: 20px;
+
+    transition: transform 500ms ease;
 }
 
 .vacancy-block {
@@ -105,6 +109,8 @@
     background-color: #38B2CF;
     width: 400px;
     position: relative;
+
+    transition: transform 500ms ease;
 }
 
 .vacancy-detail-link {
@@ -232,6 +238,8 @@
     vertical-align: middle;
     text-decoration: none;
     color: black;
+
+    transition: transform 500ms ease;
 }
 
 .register-button-text {
@@ -254,6 +262,8 @@
     text-align: center;
     vertical-align: middle;
     border: 0;
+
+    transition: transform 500ms ease;
 }
 
 .end-register-button {
@@ -345,6 +355,8 @@
     text-align: center;
     vertical-align: middle;
     border: 0;
+
+    transition: transform 500ms ease;
 }
 
 .add-skill-button {
@@ -359,6 +371,8 @@
     text-align: center;
     vertical-align: middle;
     border: 0;
+
+    transition: transform 500ms ease;
 }
 
 .create-button {
@@ -376,6 +390,8 @@
     text-align: center;
     vertical-align: middle;
     border: 0;
+
+    transition: transform 500ms ease;
 }
 
 .vacancy-detail-container {
@@ -482,13 +498,15 @@
     text-align: center;
     vertical-align: middle;
     border: 0;
+
+    transition: transform 500ms ease;
 }
 
 .add-skill-search-button {
     position: absolute;
     top: 10px;
     right: 10px;
-    display: block;
+    /*display: block;*/
     width: 150px;
     height: 50px;
     background-color: #38B2CF;
@@ -499,4 +517,42 @@
     text-align: center;
     vertical-align: middle;
     border: 0;
+
+    transition: transform 500ms ease;
+}
+
+.search-button:hover {
+    transform:scale(1.1);
+}
+
+.vacancy-block:hover {
+    transform:scale(1.1);
+}
+
+.add-skill-search-button:hover {
+    transform:scale(1.1);
+}
+
+.create-job-vacancy:hover {
+    transform:scale(1.1);
+}
+
+.add-skill-button:hover {
+    transform:scale(1.1);
+}
+
+.create-button:hover {
+    transform:scale(1.1);
+}
+
+.login-button:hover {
+    transform:scale(1.1);
+}
+
+.register-button:hover {
+    transform:scale(1.1);
+}
+
+.continue-reg-button:hover {
+    transform:scale(1.1);
 }

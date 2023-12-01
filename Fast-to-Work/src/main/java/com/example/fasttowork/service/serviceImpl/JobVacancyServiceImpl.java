@@ -35,6 +35,8 @@ public class JobVacancyServiceImpl implements JobVacancyService {
     @Autowired
     private CurrencyService currencyService;
 
+    private SecurityUtil securityUtil =  new SecurityUtil();
+
     @Override
     public List<JobVacancy> getAllJobVacancy() {
         List<JobVacancy> jobVacancies = jobVacancyRepository.findAll();
@@ -44,7 +46,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
     @Override
     public List<JobVacancy> findAllJobVacancy() {
-        String username = SecurityUtil.getSessionUserEmail();
+        String username = securityUtil.getSessionUserEmail();
         UserEntity user = employerRepository.findByEmail(username);
 
         List<JobVacancy> jobVacancies = jobVacancyRepository.findByEmployerId(user.getId());
@@ -63,7 +65,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
     @Override
     public JobVacancy createJobVacancy(JobVacancyRequest jobVacancyRequest, Long userId) {
-        String username = SecurityUtil.getSessionUserEmail();
+        String username = securityUtil.getSessionUserEmail();
         Employer employer = employerRepository.findByEmail(username);
 
         JobVacancy jobVacancy = new JobVacancy();
@@ -97,7 +99,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
         jobVacancy.setJobType(jobVacancyRequest.getJobType());
         jobVacancy.setSalary(jobVacancyRequest.getSalary());
-        jobVacancy.setCurrency(jobVacancy.getCurrency());
+        jobVacancy.setCurrency(jobVacancyRequest.getCurrency());
         jobVacancy.setDescription(jobVacancyRequest.getDescription());
 
         jobVacancyRequest.setSkills(jobVacancyRequest.getSkills().stream()
@@ -119,6 +121,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         CriteriaQuery<JobVacancy> criteriaQuery = criteriaBuilder.createQuery(JobVacancy.class);
         Root<JobVacancy> root = criteriaQuery.from(JobVacancy.class);
         Double currentOfficialRate = currencyService.getCurrentOfficialRate();
+
         Expression<Double> adjustedSalaryExpression = (Expression<Double>) criteriaBuilder.selectCase()
                 .when(criteriaBuilder.equal(root.get("currency"), "BYN"),
                         criteriaBuilder.quot(root.get("salary"), currentOfficialRate))

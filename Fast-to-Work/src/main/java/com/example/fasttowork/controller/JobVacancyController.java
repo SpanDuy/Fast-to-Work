@@ -29,6 +29,8 @@ public class JobVacancyController {
 
     private JobVacancyValidator jobVacancyValidator;
 
+    private SecurityUtil securityUtil =  new SecurityUtil();
+
     @Autowired
     public JobVacancyController(JobVacancyService jobVacancyService,
                                 SkillConverter skillConverter,
@@ -76,7 +78,7 @@ public class JobVacancyController {
     @GetMapping("/job-vacancy")
     public String findAllJobVacancy(Model model) {
         List<JobVacancy> jobVacancies = jobVacancyService.findAllJobVacancy();
-        String email = SecurityUtil.getSessionUserEmail();
+        String email = securityUtil.getSessionUserEmail();
 
         model.addAttribute("email", email);
         model.addAttribute("jobVacancies", jobVacancies);

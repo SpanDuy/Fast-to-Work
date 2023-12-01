@@ -34,6 +34,8 @@ public class ResumeServiceImpl implements ResumeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    private SecurityUtil securityUtil =  new SecurityUtil();
+
     @Override
     public List<Resume> getAllResumes() {
         List<Resume> resumes = resumeRepository.findAll();
@@ -43,7 +45,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<Resume> findAllResumes() {
-        String username = SecurityUtil.getSessionUserEmail();
+        String username = securityUtil.getSessionUserEmail();
         UserEntity user = employeeRepository.findByEmail(username);
 
         List<Resume> resumes = resumeRepository.findByEmployeeId(user.getId());
@@ -62,7 +64,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public Resume createResume(ResumeRequest resumeRequest, Long userId) {
-        String username = SecurityUtil.getSessionUserEmail();
+        String username = securityUtil.getSessionUserEmail();
         Employee employee = employeeRepository.findByEmail(username);
 
         Resume resume = new Resume();
