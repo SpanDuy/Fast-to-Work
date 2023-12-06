@@ -8,7 +8,7 @@
     <title>Job Vacancy List</title>
 </head>
 <body>
-    <section layout:fragment="body">
+    <section layout:fragment="body" class="container">
         <div class="vacancy-container">
             <div th:each="jobVacancy, index :${jobVacancies}" class="vacancy-block">
                 <a th:href="@{/job-vacancy/{id}(id=${jobVacancy.id})}" class="vacancy-detail-link">

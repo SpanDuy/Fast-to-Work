@@ -1,9 +1,13 @@
 package com.example.fasttowork.service.serviceImpl;
 
+import com.example.fasttowork.entity.CurrencyFromNBRB;
 import com.example.fasttowork.service.CurrencyService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,71 +18,33 @@ import java.net.URL;
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
 
-    @Override
-    public String getCurrencyFromNBRB() {
-        StringBuilder response = new StringBuilder();
+    private final RestTemplate restTemplate;
 
-        try {
-            String currencyCode = "USD"; // Код валюты, для которой вы хотите получить курс
-
-            // Формирование URL для запроса к API НБРБ
-            URL url = new URL("https://www.nbrb.by/api/exrates/rates/" + currencyCode + "?parammode=2");
-
-            // Открытие соединения
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            // Установка метода запроса
-            connection.setRequestMethod("GET");
-
-            // Получение ответа от сервера
-            int responseCode = connection.getResponseCode();
-
-            // Если ответ успешный (HTTP 200)
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Чтение данных из потока
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                reader.close();
-
-            } else {
-                response.append("Failed to get data. Response code: " + responseCode);
-            }
-
-            // Закрытие соединения
-            connection.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return response.toString();
+    public CurrencyServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public Double getCurrentOfficialRate() {
+    public CurrencyFromNBRB getCurrencyFromNBRB() {
         try {
-            // Ваша JSON-строка
-            String jsonString = getCurrencyFromNBRB();
-
-            // Используем ObjectMapper из библиотеки Jackson
+            String currencyCode = "USD";
+            String url = "https://www.nbrb.by/api/exrates/rates/" + currencyCode + "?parammode=2";
+            String jsonString = restTemplate.getForObject(url, String.class);
             ObjectMapper objectMapper = new ObjectMapper();
 
-            // Преобразование JSON-строки в объект JsonNode
-            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            CurrencyFromNBRB currency = objectMapper.readValue(jsonString, CurrencyFromNBRB.class);
 
-            // Получение значения курса валюты
-            double officialRate = jsonNode.get("Cur_OfficialRate").asDouble();
+            return currency;
 
-            // Вывод значения курса валюты
-            return officialRate;
         } catch (Exception e) {
             e.printStackTrace();
-            return 0.0;
+            System.out.println("Exception during deserialization: " + e.getMessage());
+            return new CurrencyFromNBRB();
         }
     }
 
+    @Override
+    public Double convertFromBYNToUSD(Double currency) {
+        return currency / getCurrencyFromNBRB().getCurOfficialRate();
+    }
 }

@@ -7,6 +7,7 @@ import com.example.fasttowork.payload.request.RegistrationEmployerDto;
 import com.example.fasttowork.payload.request.RegistrationUserDto;
 import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,14 +18,10 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class AuthController {
-    private UserService userService;
-
-    private SecurityUtil securityUtil =  new SecurityUtil();
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
+    private final SecurityUtil securityUtil;
 
     @GetMapping("/login")
     public String loginPage(){
@@ -118,9 +115,9 @@ public class AuthController {
                 .anyMatch(role -> role.getName().equals("EMPLOYEE"));
 
         if (isEmployee) {
-            return "redirect:/Resume?success";
+            return "redirect:/employee/resume?success";
         } else {
-            return "redirect:/job-vacancy?success";
+            return "redirect:/employer/job-vacancy?success";
         }
     }
 
@@ -136,7 +133,7 @@ public class AuthController {
         if (isEmployee) {
             return "redirect:/job-vacancy/all";
         } else {
-            return "redirect:/Resume/all";
+            return "redirect:/resume/all";
         }
     }
 }

@@ -12,7 +12,7 @@
             <div>
                 <p th:each="error : ${errors}" th:text="${error.defaultMessage}" class="invalid-login"></p>
             </div>
-            <form role="form" method="post" th:action="@{/Resume/new}" th:object="${resume}">
+            <form role="form" method="post" th:action="@{/employee/resume/create}" th:object="${resume}">
                 <div class="login-username">
                     <label>Job Type</label>
                     <input

@@ -10,7 +10,9 @@ import com.example.fasttowork.repository.EmployeeRepository;
 import com.example.fasttowork.repository.EmployerRepository;
 import com.example.fasttowork.repository.RoleRepository;
 import com.example.fasttowork.repository.UserRepository;
+import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,25 +24,14 @@ import java.time.ZoneId;
 import java.util.Arrays;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private EmployeeRepository employeeRepository;
-    private EmployerRepository employerRepository;
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           EmployeeRepository employeeRepository,
-                           EmployerRepository employerRepository,
-                           PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.employeeRepository = employeeRepository;
-        this.employerRepository = employerRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final EmployeeRepository employeeRepository;
+    private final EmployerRepository employerRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final SecurityUtil securityUtil;
 
     @Override
     public UserEntity saveUser(RegistrationUserDto registrationUserDto) {
@@ -101,5 +92,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public UserEntity getCurrentUser() {
+        String username = securityUtil.getSessionUserEmail();
+
+        return userRepository.findByEmail(username);
     }
 }

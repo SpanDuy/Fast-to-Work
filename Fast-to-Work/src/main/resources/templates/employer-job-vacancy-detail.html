@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Vacancy Detail</title>
+</head>
+<body>
+<section layout:fragment="body">
+  <div class="create-job-vacancy">
+    <a th:href="@{/employer/job-vacancy}" class="create-job-vacancy-text">Redirect</a>
+  </div>
+
+  <div class="vacancy-detail-container">
+    <div class="jobVacancy-jobType">
+      <p th:text="${jobVacancy.jobType}"></p>
+    </div>
+    <div class="company-salary">
+      <p th:text="'Company: ' + ${jobVacancy.company}"></p>
+      <p th:text="'Salary: ' + ${jobVacancy.salary} + ' ' + ${jobVacancy.currency}"></p>
+      <p th:text="'Email: ' + ${email}"></p>
+    </div>
+    <div class="description">
+      <p th:text="'Description: ' + ${jobVacancy.description}"></p>
+    </div>
+    <div class="skill-detail-container">
+      <div th:each="skill, status : ${jobVacancy.skills}" class="skill-detail" th:classappend="${#strings.endsWith(status.index, 2)} ? 'last-in-row' : ''">
+        <p th:text="${skill.skill}"></p>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

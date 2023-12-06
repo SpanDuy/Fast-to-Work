@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume List</title>
+</head>
+<body>
+<section layout:fragment="body">
+    <div class="user-information-container">
+        <div class="user-icon">
+            <i class="fi fi-rr-circle-user"></i>
+        </div>
+        <div class="user-information">
+            <div th:text="${email}"></div>
+        </div>
+    </div>
+    <div class="create-job-vacancy">
+        <a th:href="@{/employee/resume/create}" class="create-job-vacancy-text">Create Resume</a>
+    </div>
+
+    <div class="vacancy-container">
+        <div th:each="resume, index :${resumes}" class="vacancy-block">
+            <a th:href="@{/employee/resume/{id}(id=${resume.id})}" class="vacancy-detail-link">
+                    <span>
+
+                        <div>
+                            <div>
+                                <p th:text="${resume.jobType}" class="vacancy-text"></p>
+                            </div>
+                            <div class="skill-detail-container">
+                                <div th:each="skill, status : ${resume.skills}" class="skill-detail" th:classappend="${#strings.endsWith(status.index, 2)} ? 'last-in-row' : ''">
+                                    <p th:text="${skill.skill}" class="skill-text"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="icons-edit-delete">
+                            <a th:href="@{/employee/resume/edit/{id}(id=${resume.id})}" class="icon-edit-delete"><i class="fi fi-rr-edit"></i></a>
+                            <a th:href="@{/employee/resume/delete/{id}(id=${resume.id})}" class="icon-edit-delete"><i class="fi fi-rr-cross-circle"></i></a>
+                        </div>
+                    </span>
+            </a>
+        </div>
+    </div>
+</section>
+</body>
+</html>

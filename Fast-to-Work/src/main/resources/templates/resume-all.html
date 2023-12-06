@@ -8,10 +8,10 @@
     <title>Resume List</title>
 </head>
 <body>
-<section layout:fragment="body">
+<section layout:fragment="body" class="container">
     <div class="vacancy-container">
         <div th:each="resume, index :${resumes}" class="vacancy-block">
-            <a th:href="@{/Resume/{id}(id=${resume.id})}" class="vacancy-detail-link">
+            <a th:href="@{/resume/{id}(id=${resume.id})}" class="vacancy-detail-link">
                     <span>
 
                         <div>
@@ -30,7 +30,7 @@
     </div>
 
     <div class="search-container">
-        <form role="form" method="post" th:action="@{/Resume/all}" th:object="${resumeSearchRequest}">
+        <form role="form" method="post" th:action="@{/resume/all}" th:object="${resumeSearchRequest}">
             <div >
                 <p class="vacancy-text">Search</p>
                 <div class="login-username">

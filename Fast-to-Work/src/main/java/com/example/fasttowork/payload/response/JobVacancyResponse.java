@@ -1,38 +1,27 @@
-package com.example.fasttowork.entity;
+package com.example.fasttowork.payload.response;
 
-import jdk.jfr.Enabled;
+import com.example.fasttowork.entity.Employer;
+import com.example.fasttowork.entity.Skill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Currency;
 import java.util.List;
 
 @Data
-@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "job_vacancy")
-public class JobVacancy {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+public class JobVacancyResponse {
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "employer_id")
-    private Employer employer;
+    private String company;
+    private String email;
 
     private String jobType;
-
     private Integer salary;
-
     private String currency;
-
     private String description;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Skill> skills;
 }

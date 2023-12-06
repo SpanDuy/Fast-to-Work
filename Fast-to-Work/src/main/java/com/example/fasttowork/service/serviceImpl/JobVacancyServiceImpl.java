@@ -2,13 +2,16 @@ package com.example.fasttowork.service.serviceImpl;
 
 import com.example.fasttowork.entity.*;
 import com.example.fasttowork.exception.BadRequestException;
+import com.example.fasttowork.mapper.JobVacancyMapper;
 import com.example.fasttowork.payload.request.JobVacancyRequest;
 import com.example.fasttowork.payload.request.JobVacancySearchRequest;
+import com.example.fasttowork.payload.response.JobVacancyResponse;
 import com.example.fasttowork.repository.EmployerRepository;
 import com.example.fasttowork.repository.JobVacancyRepository;
 import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.CurrencyService;
 import com.example.fasttowork.service.JobVacancyService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,20 +25,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class JobVacancyServiceImpl implements JobVacancyService {
-    @Autowired
-    private EntityManager entityManager;
 
-    @Autowired
-    private JobVacancyRepository jobVacancyRepository;
-
-    @Autowired
-    private EmployerRepository employerRepository;
-
-    @Autowired
-    private CurrencyService currencyService;
-
-    private SecurityUtil securityUtil =  new SecurityUtil();
+    private final EntityManager entityManager;
+    private final JobVacancyRepository jobVacancyRepository;
+    private final EmployerRepository employerRepository;
+    private final CurrencyService currencyService;
 
     @Override
     public List<JobVacancy> getAllJobVacancy() {
@@ -45,44 +41,37 @@ public class JobVacancyServiceImpl implements JobVacancyService {
     }
 
     @Override
-    public List<JobVacancy> findAllJobVacancy() {
-        String username = securityUtil.getSessionUserEmail();
-        UserEntity user = employerRepository.findByEmail(username);
-
-        List<JobVacancy> jobVacancies = jobVacancyRepository.findByEmployerId(user.getId());
+    public List<JobVacancy> findAllJobVacancy(Employer employer) {
+        List<JobVacancy> jobVacancies = jobVacancyRepository.findByEmployerId(employer.getId());
 
         return jobVacancies;
     }
 
 
     @Override
-    public JobVacancy findJobVacancyById(Long id) {
+    public JobVacancyResponse findJobVacancyById(Long id, Employer employer) {
         JobVacancy jobVacancy = jobVacancyRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
 
-        return jobVacancy;
+        if (!jobVacancy.getEmployer().equals(employer)) {
+            throw new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER");
+        }
+
+        return JobVacancyMapper.mapToJobVacancyResponse(jobVacancy);
     }
 
     @Override
-    public JobVacancy createJobVacancy(JobVacancyRequest jobVacancyRequest, Long userId) {
-        String username = securityUtil.getSessionUserEmail();
-        Employer employer = employerRepository.findByEmail(username);
+    public JobVacancyResponse getJobVacancyById(Long id) {
+        JobVacancy jobVacancy = jobVacancyRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
 
-        JobVacancy jobVacancy = new JobVacancy();
+        return JobVacancyMapper.mapToJobVacancyResponse(jobVacancy);
+    }
 
+    @Override
+    public JobVacancy createJobVacancy(JobVacancyRequest jobVacancyRequest, Employer employer) {
+        JobVacancy jobVacancy = JobVacancyMapper.mapToJobVacancy(jobVacancyRequest);
         jobVacancy.setEmployer(employer);
-        jobVacancy.setCompany(employer.getCompany());
-
-        jobVacancy.setJobType(jobVacancyRequest.getJobType());
-        jobVacancy.setSalary(jobVacancyRequest.getSalary());
-        jobVacancy.setCurrency(jobVacancyRequest.getCurrency());
-        jobVacancy.setDescription(jobVacancyRequest.getDescription());
-        if (jobVacancyRequest.getSkills() != null) {
-            jobVacancyRequest.setSkills(jobVacancyRequest.getSkills().stream()
-                    .filter(item -> item != null && item.getSkill() != "")
-                    .collect(Collectors.toList()));
-        }
-        jobVacancy.setSkills(jobVacancyRequest.getSkills());
 
         jobVacancyRepository.save(jobVacancy);
 
@@ -93,26 +82,39 @@ public class JobVacancyServiceImpl implements JobVacancyService {
     }
 
     @Override
-    public void editJobVacancy(JobVacancyRequest jobVacancyRequest, Long id) {
+    public void editJobVacancy(JobVacancyRequest jobVacancyRequest, Long id, Employer employer) {
         JobVacancy jobVacancy = jobVacancyRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
 
-        jobVacancy.setJobType(jobVacancyRequest.getJobType());
-        jobVacancy.setSalary(jobVacancyRequest.getSalary());
-        jobVacancy.setCurrency(jobVacancyRequest.getCurrency());
-        jobVacancy.setDescription(jobVacancyRequest.getDescription());
+        if (!jobVacancy.getEmployer().equals(employer)) {
+            throw new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER");
+        }
 
-        jobVacancyRequest.setSkills(jobVacancyRequest.getSkills().stream()
-                .filter(item -> item != null && item.getSkill() != "")
-                .collect(Collectors.toList()));
-        jobVacancy.setSkills(jobVacancyRequest.getSkills());
+        jobVacancy = JobVacancyMapper.mapToJobVacancy(jobVacancyRequest);
+        jobVacancy.setEmployer(employer);
 
         jobVacancyRepository.save(jobVacancy);
     }
 
     @Override
-    public void deleteJobVacancy(Long userId, Long id) {
+    public void deleteJobVacancy(Long id, Employer employer) {
+        JobVacancy jobVacancy = jobVacancyRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
+
+        if (!jobVacancy.getEmployer().equals(employer)) {
+            throw new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER");
+        }
+
         jobVacancyRepository.deleteById(id);
+    }
+
+    public Expression<Double> addAdjustedSalary(CriteriaBuilder criteriaBuilder, Root<JobVacancy> root) {
+        return (Expression<Double>) criteriaBuilder.selectCase()
+                .when(criteriaBuilder.equal(root.get("currency"), "BYN"),
+                        criteriaBuilder.quot(root.get("salary"), currencyService.getCurrencyFromNBRB().getCurOfficialRate()))
+                .otherwise(root.get("salary"))
+                .as(Double.class)
+                .alias("adjustedSalary");
     }
 
     @Override
@@ -120,14 +122,6 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<JobVacancy> criteriaQuery = criteriaBuilder.createQuery(JobVacancy.class);
         Root<JobVacancy> root = criteriaQuery.from(JobVacancy.class);
-        Double currentOfficialRate = currencyService.getCurrentOfficialRate();
-
-        Expression<Double> adjustedSalaryExpression = (Expression<Double>) criteriaBuilder.selectCase()
-                .when(criteriaBuilder.equal(root.get("currency"), "BYN"),
-                        criteriaBuilder.quot(root.get("salary"), currentOfficialRate))
-                .otherwise(root.get("salary"))
-                .as(Double.class)
-                .alias("adjustedSalary");
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -136,43 +130,35 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         }
 
         if (jobVacancySearchRequest.getSalaryMin() != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(adjustedSalaryExpression,
-                    jobVacancySearchRequest.getCurrencyMin().equals("BYN") ?
-                            jobVacancySearchRequest.getSalaryMin().doubleValue() / currentOfficialRate :
-                            jobVacancySearchRequest.getSalaryMin().doubleValue()));
+            if (!jobVacancySearchRequest.getCurrencyMin().equals("USD")) {
+                jobVacancySearchRequest.setSalaryMin(currencyService.convertFromBYNToUSD(jobVacancySearchRequest.getSalaryMin()));
+            }
+
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(addAdjustedSalary(criteriaBuilder, root), jobVacancySearchRequest.getSalaryMin()));
         }
 
         if (jobVacancySearchRequest.getSalaryMax() != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(adjustedSalaryExpression,
-                    jobVacancySearchRequest.getCurrencyMax().equals("BYN") ?
-                            jobVacancySearchRequest.getSalaryMax().doubleValue() / currentOfficialRate :
-                            jobVacancySearchRequest.getSalaryMax().doubleValue()));
+            if (!jobVacancySearchRequest.getCurrencyMax().equals("USD")) {
+                jobVacancySearchRequest.setSalaryMax(currencyService.convertFromBYNToUSD(jobVacancySearchRequest.getSalaryMax()));
+            }
+
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(addAdjustedSalary(criteriaBuilder, root), jobVacancySearchRequest.getSalaryMax()));
         }
 
-        if (jobVacancySearchRequest.getSkills() != null) {
-            jobVacancySearchRequest.setSkills(jobVacancySearchRequest.getSkills().stream()
-                    .filter(item -> item != null && !item.getSkill().isEmpty())
-                    .collect(Collectors.toList()));
-        }
-
-        if (jobVacancySearchRequest.getSkills() != null && !jobVacancySearchRequest.getSkills().isEmpty()) {
+        if (jobVacancySearchRequest.getSkills() != null && !jobVacancySearchRequest.getNotEmptySkills().isEmpty()) {
             Join<JobVacancy, Skill> skillJoin = root.join("skills");
-            List<String> skillNames = jobVacancySearchRequest.getSkills().stream()
-                    .map(Skill::getSkill)
-                    .collect(Collectors.toList());
+            List<String> skillNames = jobVacancySearchRequest.getSkillsNames();
 
             predicates.add(skillJoin.get("skill").in(skillNames));
 
-            if (jobVacancySearchRequest.getSkills().size() > 1) {
-                criteriaQuery.groupBy(root.get("id"));
+            criteriaQuery.groupBy(root.get("id"));
 
-                criteriaQuery.having(
-                        criteriaBuilder.equal(
-                                criteriaBuilder.countDistinct(skillJoin.get("skill")),
-                                jobVacancySearchRequest.getSkills().size()
-                        )
-                );
-            }
+            criteriaQuery.having(
+                    criteriaBuilder.equal(
+                            criteriaBuilder.countDistinct(skillJoin.get("skill")),
+                            jobVacancySearchRequest.getSkills().size()
+                    )
+            );
         }
 
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
@@ -181,3 +167,4 @@ public class JobVacancyServiceImpl implements JobVacancyService {
         return typedQuery.getResultList();
     }
 }
+

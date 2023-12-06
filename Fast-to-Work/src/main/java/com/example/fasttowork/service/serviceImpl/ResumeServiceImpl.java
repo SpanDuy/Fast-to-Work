@@ -2,13 +2,16 @@ package com.example.fasttowork.service.serviceImpl;
 
 import com.example.fasttowork.entity.*;
 import com.example.fasttowork.exception.BadRequestException;
+import com.example.fasttowork.mapper.ResumeMapper;
 import com.example.fasttowork.payload.request.JobVacancySearchRequest;
 import com.example.fasttowork.payload.request.ResumeRequest;
 import com.example.fasttowork.payload.request.ResumeSearchRequest;
+import com.example.fasttowork.payload.response.ResumeResponse;
 import com.example.fasttowork.repository.EmployeeRepository;
 import com.example.fasttowork.repository.ResumeRepository;
 import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.ResumeService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,63 +26,46 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
-
-    @Autowired
-    private EntityManager entityManager;
-
-    @Autowired
-    private ResumeRepository resumeRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    private SecurityUtil securityUtil =  new SecurityUtil();
+    private final EntityManager entityManager;
+    private final ResumeRepository resumeRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Override
     public List<Resume> getAllResumes() {
-        List<Resume> resumes = resumeRepository.findAll();
-
-        return resumes;
+        return resumeRepository.findAll();
     }
 
     @Override
-    public List<Resume> findAllResumes() {
-        String username = securityUtil.getSessionUserEmail();
-        UserEntity user = employeeRepository.findByEmail(username);
-
-        List<Resume> resumes = resumeRepository.findByEmployeeId(user.getId());
-
-        return resumes;
+    public List<Resume> findAllResumes(Employee employee) {
+        return resumeRepository.findByEmployeeId(employee.getId());
     }
 
-
     @Override
-    public Resume findResumeById(Long id) {
+    public ResumeResponse findResumeById(Long id, Employee employee) {
         Resume resume = resumeRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
 
-        return resume;
+        if (!resume.getEmployee().equals(employee)) {
+            throw new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER");
+        }
+
+        return ResumeMapper.mapToResumeResponse(resume);
     }
 
     @Override
-    public Resume createResume(ResumeRequest resumeRequest, Long userId) {
-        String username = securityUtil.getSessionUserEmail();
-        Employee employee = employeeRepository.findByEmail(username);
+    public ResumeResponse getResumeById(Long id) {
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
 
-        Resume resume = new Resume();
+        return ResumeMapper.mapToResumeResponse(resume);
+    }
 
+    @Override
+    public Resume createResume(ResumeRequest resumeRequest, Employee employee) {
+        Resume resume = ResumeMapper.mapToResume(resumeRequest);
         resume.setEmployee(employee);
-        resume.setJobType(resumeRequest.getJobType());
-        resume.setName(employee.getName());
-        resume.setSurname(employee.getSurname());
-        resume.setMiddleName(employee.getMiddleName());
-        resume.setBirthday(employee.getBirthday());
-        resume.setCity(employee.getCity());
-        resume.setGender(employee.getGender());
-        resume.setPhoneNumber(employee.getPhoneNumber());
-        resume.setSkills(resumeRequest.getSkills());
-        resume.setDescription(resumeRequest.getDescription());
 
         resumeRepository.save(resume);
 
@@ -90,19 +76,29 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void editResume(ResumeRequest resumeRequest, Long id) {
+    public void editResume(ResumeRequest resumeRequest, Long id, Employee employee) {
         Resume resume = resumeRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
 
-        resume.setJobType(resumeRequest.getJobType());
-        resume.setDescription(resumeRequest.getDescription());
-        resume.setSkills(resumeRequest.getSkills());
+        if (!resume.getEmployee().equals(employee)) {
+            throw new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER");
+        }
+
+        resume = ResumeMapper.mapToResume(resumeRequest);
+        resume.setEmployee(employee);
 
         resumeRepository.save(resume);
     }
 
     @Override
-    public void deleteResume(Long userId, Long id) {
+    public void deleteResume(Long id, Employee employee) {
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER"));
+
+        if (!resume.getEmployee().equals(employee)) {
+            throw new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER");
+        }
+
         resumeRepository.deleteById(id);
     }
 
@@ -118,13 +114,13 @@ public class ResumeServiceImpl implements ResumeService {
 
         if (resumeSearchRequest.getAgeMin() != null) {
             ageMin = ageMin.minusYears(resumeSearchRequest.getAgeMin());
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("employee").get("birthday"), ageMax));
         }
 
         if (resumeSearchRequest.getAgeMax() != null) {
             ageMax = ageMax.minusYears(resumeSearchRequest.getAgeMax());
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("employee").get("birthday"), ageMin));
         }
-
-        predicates.add(criteriaBuilder.between(root.get("birthday"), ageMax, ageMin));
 
         if (StringUtils.isNotBlank(resumeSearchRequest.getJobType())) {
             predicates.add(criteriaBuilder.equal(root.get("jobType"), resumeSearchRequest.getJobType()));

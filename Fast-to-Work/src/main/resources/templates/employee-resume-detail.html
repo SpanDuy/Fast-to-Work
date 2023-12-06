@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Detail</title>
+</head>
+<body>
+<section layout:fragment="body">
+  <div class="create-job-vacancy">
+    <a th:href="@{/employee/resume}" class="create-job-vacancy-text">Redirect</a>
+  </div>
+
+  <div class="vacancy-detail-container">
+    <div class="jobVacancy-jobType">
+      <p th:text="${resume.jobType}"></p>
+    </div>
+    <div class="company-salary">
+      <p th:text="'Name: ' + ${resume.name}"></p>
+      <p th:text="'Surname: ' + ${resume.surname}"></p>
+      <p th:text="'Middle Name: ' + ${resume.middleName}"></p>
+      <p th:text="'Birthday: ' + ${#temporals.format(resume.birthday, 'yyyy-MM-dd')}"></p>
+      <p th:text="'City: ' + ${resume.city}"></p>
+      <p th:text="'Gender: ' + ${resume.gender ? 'Male' : 'Female'}"></p>
+      <p th:text="'Phone Number: ' + ${resume.phoneNumber}"></p>
+    </div>
+    <div class="description">
+      <p th:text="'Description: ' + ${resume.description}"></p>
+    </div>
+    <div class="skill-detail-container">
+      <div th:each="skill, status : ${resume.skills}" class="skill-detail" th:classappend="${#strings.endsWith(status.index, 2)} ? 'last-in-row' : ''">
+        <p th:text="${skill.skill}"></p>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

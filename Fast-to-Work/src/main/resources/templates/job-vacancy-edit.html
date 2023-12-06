@@ -14,7 +14,7 @@
                 <p th:each="error : ${errors}" th:text="${error.defaultMessage}" class="invalid-login"></p>
             </div>
 
-            <form role="form" method="post" th:action="@{/job-vacancy/edit/{id}(id=${jobVacancyRequest.id})}" th:object="${jobVacancyRequest}">
+            <form role="form" method="post" th:action="@{/employer/job-vacancy/edit/{id}(id=${jobVacancyRequest.id})}" th:object="${jobVacancyRequest}">
                 <div class="login-username">
                     <label for="jobType">Job Type</label>
                     <input

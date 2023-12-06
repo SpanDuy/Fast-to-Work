@@ -92,6 +92,29 @@
     transition: transform 500ms ease;
 }
 
+.message-container {
+    background-color: #38B2CF;
+    padding: 10px;
+    margin: 10px;
+    width: 50%;
+    height: 100%;
+}
+
+.send-message-button {
+    background-color: #206677;
+    padding: 10px;
+    margin: 10px;
+    width: 220px;
+    height: 100%;
+    text-align: center;
+
+    transition: transform 500ms ease;
+}
+
+.send-message-button:hover {
+    transform:scale(1.1);
+}
+
 .create-job-vacancy-text {
     text-decoration: none;
     padding: 10px;
@@ -136,12 +159,20 @@
 }
 
 .content {
-    position: relative;
-    padding-bottom: 100vh;
-    /*padding-bottom: 245px;*/
+    /*padding-bottom: 100vh;*/
+    padding-bottom: 245px;
 }
 
+.vacancy-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
 
+.container {
+    display: flex;
+    justify-content: space-between;
+}
 
 .invalid-login {
     background-color: red;
@@ -402,6 +433,14 @@
     width: 40%;
 }
 
+.vacancy-detail {
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    padding: 10px;
+    margin: 10px;
+    width: 100%;
+}
+
 .jobVacancy-jobType {
     font-size: 32px;
     text-align: center;
@@ -469,10 +508,10 @@
 }
 
 .search-container {
-    position: absolute;
-    top: 0;
-    right: 0;
+    padding: 10px;
+    margin: 10px;
     width: 450px;
+    height: 100%;
     background-color: #38B2CF;
 }
 
@@ -500,6 +539,37 @@
     border: 0;
 
     transition: transform 500ms ease;
+}
+
+.send-button:hover {
+    transform:scale(1.1);
+}
+
+.send-button {
+    display: block;
+    width: 90%;
+    height: 50px;
+    background-color: #38B2CF;
+    font-family: "Itim", Arial, sans-serif;
+    font-size: 24px;
+    /*padding: 10px;*/
+    /*margin: 10px 0 10px 10px;*/
+    text-align: center;
+    vertical-align: middle;
+    border: 0;
+
+    transition: transform 500ms ease;
+}
+
+.send-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 450px;
+    height: 50px;
+    margin: 10px;
+    padding: 10px;
+    background-color: #206677;
 }
 
 .add-skill-search-button {

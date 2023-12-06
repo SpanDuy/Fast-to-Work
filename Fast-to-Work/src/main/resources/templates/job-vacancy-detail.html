@@ -8,27 +8,51 @@
     <title>Job Vacancy Detail</title>
 </head>
 <body>
-<section layout:fragment="body">
-    <div class="create-job-vacancy">
-        <a th:href="@{${referrer}}" class="create-job-vacancy-text">Redirect</a>
-    </div>
+<section layout:fragment="body" class="container">
+    <div>
+        <div class="create-job-vacancy">
+            <a th:href="@{/job-vacancy/all}" class="create-job-vacancy-text">Redirect</a>
+        </div>
 
-    <div class="vacancy-detail-container">
-        <div class="jobVacancy-jobType">
-            <p th:text="${jobVacancy.jobType}"></p>
-        </div>
-        <div class="company-salary">
-            <p th:text="'Company: ' + ${jobVacancy.company}"></p>
-            <p th:text="'Salary: ' + ${jobVacancy.salary} + ' ' + ${jobVacancy.currency}"></p>
-        </div>
-        <div class="description">
-            <p th:text="'Description: ' + ${jobVacancy.description}"></p>
-        </div>
-        <div class="skill-detail-container">
-            <div th:each="skill, status : ${jobVacancy.skills}" class="skill-detail" th:classappend="${#strings.endsWith(status.index, 2)} ? 'last-in-row' : ''">
-                <p th:text="${skill.skill}"></p>
+        <div class="vacancy-detail">
+            <div class="jobVacancy-jobType">
+                <p th:text="${jobVacancy.jobType}"></p>
+            </div>
+            <div class="company-salary">
+                <p th:text="'Company: ' + ${jobVacancy.company}"></p>
+                <p th:text="'Salary: ' + ${jobVacancy.salary} + ' ' + ${jobVacancy.currency}"></p>
+                <p th:text="'Email: ' + ${jobVacancy.email}"></p>
+            </div>
+            <div class="description">
+                <p th:text="'Description: ' + ${jobVacancy.description}"></p>
+            </div>
+            <div class="skill-detail-container">
+                <div th:each="skill, status : ${jobVacancy.skills}" class="skill-detail" th:classappend="${#strings.endsWith(status.index, 2)} ? 'last-in-row' : ''">
+                    <p th:text="${skill.skill}"></p>
+                </div>
             </div>
         </div>
+    </div>
+
+    <div class="message-container">
+        <form role="form" method="post" th:action="@{/email/send}" th:object="${emailMessageRequest}">
+            <div class="send-button-container">
+<!--                <a th:href="@{/email/send}" class="create-job-vacancy-text">Send Message</a>-->
+                <button type="submit" class="send-button">Send Message</button>
+            </div>
+            <div class="detail-container">
+                <label for="emailMessageRequest.text">Description</label>
+                <textarea
+                        type="text"
+                        class="detail-input"
+                        id="emailMessageRequest.text"
+                        name="text"
+                        th:field="*{text}"
+                        placeholder="Text">
+                </textarea>
+<!--                <p th:if="${#fields.hasErrors('emailMessageRequest.text')}"></p>-->
+            </div>
+        </form>
     </div>
 </section>
 </body>

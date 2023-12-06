@@ -11,4 +11,5 @@ public interface UserService {
     void saveEmployer(RegistrationEmployerDto registrationEmployerDto);
     UserEntity findByEmail(String email);
     UserEntity findByUsername(String username);
+    UserEntity getCurrentUser();
 }

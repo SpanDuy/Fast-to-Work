@@ -1,9 +1,7 @@
 package com.example.fasttowork.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import javax.persistence.*;
 
 import javax.persistence.CascadeType;
@@ -21,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "employee")
+@ToString
 public class Employee extends UserEntity {
     private String name;
     private String surname;
@@ -34,5 +33,6 @@ public class Employee extends UserEntity {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             orphanRemoval = true)
+    @ToString.Exclude
     private List<Resume> resumes = new ArrayList<>();
 }

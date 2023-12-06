@@ -3,54 +3,35 @@ package com.example.fasttowork.controller;
 import com.example.fasttowork.entity.JobVacancy;
 import com.example.fasttowork.entity.Resume;
 import com.example.fasttowork.entity.converter.SkillConverter;
+import com.example.fasttowork.payload.request.EmailMessageRequest;
 import com.example.fasttowork.payload.request.JobVacancySearchRequest;
 import com.example.fasttowork.payload.request.ResumeRequest;
 import com.example.fasttowork.payload.request.ResumeSearchRequest;
+import com.example.fasttowork.payload.response.JobVacancyResponse;
+import com.example.fasttowork.payload.response.ResumeResponse;
 import com.example.fasttowork.security.SecurityUtil;
 import com.example.fasttowork.service.ResumeService;
+import com.example.fasttowork.service.UserService;
 import com.example.fasttowork.validator.ResumeValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class ResumeController {
-    private ResumeService resumeService;
+    private final ResumeService resumeService;
+    private final UserService userService;
 
-    private SkillConverter skillConverter;
-
-    private ResumeValidator resumeValidator;
-
-    private SecurityUtil securityUtil =  new SecurityUtil();
-
-    @Autowired
-    public ResumeController(ResumeService resumeService,
-                            SkillConverter skillConverter,
-                            ResumeValidator resumeValidator) {
-        this.resumeService = resumeService;
-        this.skillConverter = skillConverter;
-        this.resumeValidator = resumeValidator;
-    }
-
-//    @GetMapping("/Resume/all")
-//    public String getAllResume(Model model) {
-//        List<Resume> resumes = resumeService.getAllResumes();
-//
-//        model.addAttribute("resumes", resumes);
-//
-//        return "resume-all";
-//    }
-
-    @GetMapping("/Resume/all")
+    @GetMapping("/resume/all")
     public String getAllResume(Model model,
                                HttpServletResponse response) {
         ResumeSearchRequest resumeSearchRequest = new ResumeSearchRequest();
@@ -63,7 +44,7 @@ public class ResumeController {
         return "resume-all";
     }
 
-    @PostMapping("/Resume/all")
+    @PostMapping("/resume/all")
     public String getAllResume(@ModelAttribute("resume") ResumeSearchRequest resumeSearchRequest,
                                    BindingResult result,
                                    Model model,
@@ -84,87 +65,22 @@ public class ResumeController {
         return "resume-all";
     }
 
-    @GetMapping("/Resume")
-    public String findAllResume(Model model) {
-        List<Resume> resumes = resumeService.findAllResumes();
-        String email = securityUtil.getSessionUserEmail();
+    @GetMapping("/resume/{id}")
+    public String getResume(@PathVariable Long id,
+                                HttpSession session,
+                                Model model) {
 
-        model.addAttribute("email", email);
-        model.addAttribute("resumes", resumes);
-
-        return "resume-list";
-    }
-
-    @GetMapping("/Resume/{id}")
-    public String getResume(@PathVariable Long id, Model model, HttpServletRequest request) {
-        Resume resume = resumeService.findResumeById(id);
-        String referrer = request.getHeader("Referer");
-
-        model.addAttribute("referrer", referrer);
-        model.addAttribute("resume", resume);
-        // model.addAttribute("skills", resume.getSkills());
-
-        return "resume-detail";
-    }
-
-    @GetMapping("/Resume/new")
-    public String createResumeForm(Model model) {
-        ResumeRequest resumeRequest = new ResumeRequest(); // Используем ResumeRequest вместо Resume
-        model.addAttribute("resume", resumeRequest); // Используем "resume" вместо "resumeRequest"
-        return "resume-create";
-    }
-
-    @PostMapping("/Resume/new")
-    public String createResume(@ModelAttribute("resume") ResumeRequest resumeRequest,
-                               BindingResult result,
-                               Model model) {
-        resumeValidator.validate(resumeRequest, result);
-
-        if(result.hasErrors()) {
-            model.addAttribute("errors", result.getAllErrors());
-            model.addAttribute("resume", resumeRequest);
-            return "resume-create";
-        }
-
-        resumeService.createResume(resumeRequest, 1L);
-
-        return "redirect:/Resume";
-    }
-
-    @GetMapping("/Resume/edit/{id}")
-    public String editResumeForm(@PathVariable Long id,
-                                 Model model) {
-        Resume resume = resumeService.findResumeById(id);
-
-        ResumeRequest resumeRequest = ResumeRequest.builder()
-                .id(resume.getId())
-                .jobType(resume.getJobType())
-                .description(resume.getDescription())
-                .skills(resume.getSkills())
+        ResumeResponse resume = resumeService.getResumeById(id);
+        EmailMessageRequest emailMessageRequest = EmailMessageRequest.builder()
+                .emailAddress(resume.getEmail())
+                .subject(userService.getCurrentUser().getEmail() + ": http://localhost:8080/resume/" + id)
                 .build();
 
-        model.addAttribute("resume", resumeRequest); // Используем "resume" вместо "resumeRequest"
-        return "resume-edit";
-    }
+        session.setAttribute("emailMessageRequest", emailMessageRequest);
 
-    @PostMapping("/Resume/edit/{id}")
-    public String editResume(@PathVariable Long id,
-                             @ModelAttribute("resume") ResumeRequest resumeRequest,
-                             BindingResult result,
-                             Model model) {
-        if(result.hasErrors()) {
-            model.addAttribute("resume", resumeRequest);
-            return "resume-edit";
-        }
+        model.addAttribute("resume", resume);
+        model.addAttribute("emailMessageRequest", emailMessageRequest);
 
-        resumeService.editResume(resumeRequest, id);
-
-        return "redirect:/Resume";
-    }
-
-    @GetMapping("/Resume/delete/{id}")
-    public String deleteResume(@PathVariable("id") Long id, Model model) {
-        resumeService.deleteResume(1L, id);
-        return "redirect:/Resume";
+        return "resume-detail";
     }
 }

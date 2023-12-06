@@ -125,6 +125,10 @@
 			<version>2.0.9</version> <!-- Укажите актуальную версию -->
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 
     </dependencies>
 
