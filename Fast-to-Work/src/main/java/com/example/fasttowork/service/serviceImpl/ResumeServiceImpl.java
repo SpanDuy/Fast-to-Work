@@ -84,6 +84,7 @@ public class ResumeServiceImpl implements ResumeService {
             throw new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER");
         }
 
+        resumeRequest.setId(resume.getId());
         resume = ResumeMapper.mapToResume(resumeRequest);
         resume.setEmployee(employee);
 

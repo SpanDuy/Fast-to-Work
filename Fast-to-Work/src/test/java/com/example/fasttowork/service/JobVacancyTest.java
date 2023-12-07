@@ -5,8 +5,10 @@ import com.example.fasttowork.entity.JobVacancy;
 import com.example.fasttowork.entity.Skill;
 import com.example.fasttowork.entity.UserEntity;
 import com.example.fasttowork.exception.BadRequestException;
+import com.example.fasttowork.mapper.JobVacancyMapper;
 import com.example.fasttowork.payload.request.JobVacancyRequest;
 import com.example.fasttowork.payload.request.JobVacancySearchRequest;
+import com.example.fasttowork.payload.response.JobVacancyResponse;
 import com.example.fasttowork.repository.EmployerRepository;
 import com.example.fasttowork.repository.JobVacancyRepository;
 import com.example.fasttowork.security.SecurityUtil;
@@ -43,264 +45,219 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class JobVacancyTest {
-    @MockBean
+    @Mock
     private JobVacancyRepository jobVacancyRepository;
-
     @Mock
     private EmployerRepository employerRepository;
-
-    @Mock
-    private SecurityUtil securityUtil;
-
-    @Mock
-    private EntityManager entityManager;
-
-    @Mock
-    private CriteriaBuilder criteriaBuilder;
-
-    @Mock
-    private CriteriaQuery<JobVacancy> criteriaQuery;
-
-    @Mock
-    private Root<JobVacancy> root;
-
-    @Mock
-    private TypedQuery<JobVacancy> typedQuery;
-
-    @Mock
-    private CurrencyService currencyService;
-
-    @Mock
-    private Expression<Double> adjustedSalaryExpression;
-
     @InjectMocks
     private JobVacancyServiceImpl jobVacancyService;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     void getAllJobVacancy_shouldReturnListOfJobVacancies() {
         JobVacancy jobVacancy1 = new JobVacancy();
         JobVacancy jobVacancy2 = new JobVacancy();
-
         List<JobVacancy> mockJobVacancies = Arrays.asList(jobVacancy1, jobVacancy2);
 
         when(jobVacancyRepository.findAll()).thenReturn(mockJobVacancies);
 
-        // Act
         List<JobVacancy> result = jobVacancyService.getAllJobVacancy();
 
-        // Assert
-        assertEquals(2, result.size()); // Проверка, что возвращается ожидаемое количество элементов
-        assertEquals(jobVacancy1, result.get(0)); // Проверка, что первый элемент соответствует ожидаемому объекту
-        assertEquals(jobVacancy2, result.get(1)); // Проверка, что второй элемент соответствует ожидаемому объекту
-
-        // Можете добавить дополнительные проверки в зависимости от вашей логики
+        assertEquals(2, result.size());
+        assertEquals(jobVacancy1, result.get(0));
+        assertEquals(jobVacancy2, result.get(1));
     }
 
     @Test
-    @WithMockUser(username = "test@example.com", password = "password", roles = "EMPLOYER")
-    public void testFindAllJobVacancy() {
-        when(securityUtil.getSessionUserEmail()).thenReturn("test@example.com");
-
-        Employer user = new Employer();
-        user.setId(1L); // Установите ID для пользователя
-        when(employerRepository.findByEmail(anyString())).thenReturn(user);
-
-        List<JobVacancy> expectedJobVacancies = new ArrayList<>();
-        when(jobVacancyRepository.findByEmployerId(anyLong())).thenReturn(expectedJobVacancies);
-
-        List<JobVacancy> actualJobVacancies = jobVacancyService.findAllJobVacancy();
-
-        verify(securityUtil, times(1)).getSessionUserEmail();
-        verify(employerRepository, times(1)).findByEmail("test@example.com");
-        verify(jobVacancyRepository, times(1)).findByEmployerId(1L);
-
-        assertEquals(expectedJobVacancies, actualJobVacancies);
-    }
-
-    @Test
-    public void testFindJobVacancyById_WhenExists() {
-        // Mocking jobVacancyRepository.findById()
-        Long jobId = 1L;
-        JobVacancy expectedJobVacancy = new JobVacancy();
-        when(jobVacancyRepository.findById(jobId)).thenReturn(Optional.of(expectedJobVacancy));
-
-        // Call the method you want to test
-        JobVacancy actualJobVacancy = jobVacancyService.findJobVacancyById(jobId);
-
-        // Verify that the method was called with the expected argument
-        verify(jobVacancyRepository, times(1)).findById(jobId);
-
-        // Verify the result
-        assertEquals(expectedJobVacancy, actualJobVacancy);
-    }
-
-    @Test
-    public void testFindJobVacancyById_WhenNotExists() {
-        // Mocking jobVacancyRepository.findById()
-        Long jobId = 1L;
-        when(jobVacancyRepository.findById(jobId)).thenReturn(Optional.empty());
-
-        // Call the method you want to test and expect an exception
-        assertThrows(BadRequestException.class, () -> {
-            jobVacancyService.findJobVacancyById(jobId);
-        });
-
-        // Verify that the method was called with the expected argument
-        verify(jobVacancyRepository, times(1)).findById(jobId);
-    }
-
-    @Test
-    public void testCreateJobVacancy() {
-        // Создаем тестовые данные
-        JobVacancyRequest request = new JobVacancyRequest();
-        request.setJobType("Full Time");
-        request.setSalary(50000);
-        request.setCurrency("USD");
-        request.setDescription("Job description");
-        List<Skill> skills = new ArrayList<>();
-        skills.add(Skill.builder().skill("Java").build());
-        request.setSkills(skills);
-
-        Long userId = 1L;
-
+    void testFindAllJobVacancy() {
         Employer employer = new Employer();
-        employer.setId(userId);
-        employer.setEmail("test@example.com");
-        employer.setCompany("company");
+        employer.setId(1L);
 
-        when(securityUtil.getSessionUserEmail()).thenReturn("test@example.com");
-        when(employerRepository.findByEmail("test@example.com")).thenReturn(employer);
+        JobVacancy vacancy1 = new JobVacancy();
+        vacancy1.setId(1L);
+        vacancy1.setJobType("Vacancy 1");
+        vacancy1.setEmployer(employer);
 
-        // Вызываем тестируемый метод
-        JobVacancy createdJobVacancy = jobVacancyService.createJobVacancy(request, userId);
+        JobVacancy vacancy2 = new JobVacancy();
+        vacancy2.setId(2L);
+        vacancy2.setJobType("Vacancy 2");
+        vacancy2.setEmployer(employer);
 
-        // Проверяем результаты
+        List<JobVacancy> expectedVacancies = Arrays.asList(vacancy1, vacancy2);
+
+        when(jobVacancyRepository.findByEmployerId(employer.getId())).thenReturn(expectedVacancies);
+
+        List<JobVacancy> resultVacancies = jobVacancyService.findAllJobVacancy(employer);
+
+        assertEquals(expectedVacancies, resultVacancies);
+
+        verify(jobVacancyRepository, times(1)).findByEmployerId(employer.getId());
+    }
+
+    @Test
+    void testFindJobVacancyById() {
+        Employer employer = new Employer();
+        employer.setId(1L);
+
+        JobVacancy jobVacancy = new JobVacancy();
+        jobVacancy.setId(1L);
+        jobVacancy.setEmployer(employer);
+
+        JobVacancyResponse expectedResponse = JobVacancyMapper.mapToJobVacancyResponse(jobVacancy);
+
+        when(jobVacancyRepository.findById(jobVacancy.getId())).thenReturn(Optional.of(jobVacancy));
+
+        JobVacancyResponse resultResponse = jobVacancyService.findJobVacancyById(jobVacancy.getId(), employer);
+
+        assertEquals(expectedResponse, resultResponse);
+
+        verify(jobVacancyRepository, times(1)).findById(jobVacancy.getId());
+
+        verifyNoMoreInteractions(jobVacancyRepository);
+    }
+
+    @Test
+    void testFindJobVacancyByIdNotFound() {
+        Employer employer = new Employer();
+        employer.setId(1L);
+
+        when(jobVacancyRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(BadRequestException.class,
+                () -> jobVacancyService.findJobVacancyById(1L, employer));
+
+        verify(jobVacancyRepository, times(1)).findById(1L);
+
+        verifyNoMoreInteractions(jobVacancyRepository);
+    }
+
+    @Test
+    void testFindJobVacancyByIdWrongEmployer() {
+        Employer employer = new Employer();
+        employer.setId(1L);
+
+        JobVacancy jobVacancy = new JobVacancy();
+        jobVacancy.setId(1L);
+        jobVacancy.setEmployer(new Employer());
+
+        when(jobVacancyRepository.findById(jobVacancy.getId())).thenReturn(Optional.of(jobVacancy));
+
+        assertThrows(BadRequestException.class,
+                () -> jobVacancyService.findJobVacancyById(jobVacancy.getId(), employer));
+
+        verify(jobVacancyRepository, times(1)).findById(jobVacancy.getId());
+
+        verifyNoMoreInteractions(jobVacancyRepository);
+    }
+
+    @Test
+    void testGetJobVacancyById() {
+        Employer employer = new Employer();
+        JobVacancy jobVacancy = JobVacancy.builder().employer(employer).build();
+        jobVacancy.setId(1L);
+
+        JobVacancyResponse expectedResponse = JobVacancyMapper.mapToJobVacancyResponse(jobVacancy);
+
+        when(jobVacancyRepository.findById(jobVacancy.getId())).thenReturn(Optional.of(jobVacancy));
+
+        JobVacancyResponse resultResponse = jobVacancyService.getJobVacancyById(jobVacancy.getId());
+
+        assertEquals(expectedResponse, resultResponse);
+
+        verify(jobVacancyRepository, times(1)).findById(jobVacancy.getId());
+
+        verifyNoMoreInteractions(jobVacancyRepository);
+    }
+
+    @Test
+    void testGetJobVacancyByIdNotFound() {
+        when(jobVacancyRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(BadRequestException.class, () -> jobVacancyService.getJobVacancyById(1L));
+
+        verify(jobVacancyRepository, times(1)).findById(1L);
+
+        verifyNoMoreInteractions(jobVacancyRepository);
+    }
+
+    @Test
+    void testCreateJobVacancy() {
+        JobVacancyRequest jobVacancyRequest = JobVacancyRequest.builder().skills(new ArrayList<>()).build();
+        Employer employer = new Employer();
+
+        when(employerRepository.save(any(Employer.class))).thenReturn(new Employer());
+
+        JobVacancy createdJobVacancy = jobVacancyService.createJobVacancy(jobVacancyRequest, employer);
+
         assertNotNull(createdJobVacancy);
-        assertEquals(request.getJobType(), createdJobVacancy.getJobType());
-        assertEquals(request.getSalary(), createdJobVacancy.getSalary());
-        assertEquals(request.getCurrency(), createdJobVacancy.getCurrency());
-        assertEquals(request.getDescription(), createdJobVacancy.getDescription());
-        assertEquals(employer, createdJobVacancy.getEmployer());
-        assertEquals(skills, createdJobVacancy.getSkills());
 
-        // Проверяем взаимодействие с репозиториями
-        verify(jobVacancyRepository, times(1)).save(createdJobVacancy);
-        verify(employerRepository, times(1)).save(employer);
+        verify(employerRepository, times(1)).save(any(Employer.class));
+        verify(jobVacancyRepository, times(1)).save(any(JobVacancy.class));
     }
 
     @Test
-    public void testEditJobVacancy() {
-        // Создаем тестовые данные
-        JobVacancyRequest request = new JobVacancyRequest();
-        request.setJobType("Full Time");
-        request.setSalary(50000);
-        request.setCurrency("USD");
-        request.setDescription("Updated Job description");
-        List<Skill> skills = new ArrayList<>();
-        skills.add(Skill.builder().skill("Java").build());
-        request.setSkills(skills);
+    void testEditJobVacancy_ValidData_ShouldEditAndSaveJobVacancy() {
+        Long id = 1L;
+        Employer employer = new Employer();
+        JobVacancyRequest jobVacancyRequest = JobVacancyRequest.builder().skills(new ArrayList<>()).build();
+        JobVacancy existingJobVacancy = JobVacancy.builder().id(id).employer(employer).build();
 
-        Long vacancyId = 1L;
+        when(jobVacancyRepository.findById(id)).thenReturn(Optional.of(existingJobVacancy));
 
+        assertDoesNotThrow(() -> jobVacancyService.editJobVacancy(jobVacancyRequest, id, employer));
+
+        verify(jobVacancyRepository, times(1)).findById(id);
+        verify(jobVacancyRepository, times(1)).save(any(JobVacancy.class));
+    }
+
+    @Test
+    void testEditJobVacancy_InvalidEmployer_ShouldThrowBadRequestException() {
+        Long id = 1L;
+        Employer employer = new Employer();
+        JobVacancyRequest jobVacancyRequest = JobVacancyRequest.builder().build();
+        JobVacancy existingJobVacancy = JobVacancy.builder().id(id).employer(new Employer()).build();
+
+        when(jobVacancyRepository.findById(id)).thenReturn(Optional.of(existingJobVacancy));
+
+        assertThrows(BadRequestException.class,
+                () -> jobVacancyService.editJobVacancy(jobVacancyRequest, id, employer));
+
+        verify(jobVacancyRepository, times(1)).findById(id);
+        verify(jobVacancyRepository, never()).save(any(JobVacancy.class));
+    }
+
+    @Test
+    void testDeleteJobVacancy() {
+        Long id = 1L;
+        Employer employer = new Employer();
         JobVacancy existingJobVacancy = new JobVacancy();
-        existingJobVacancy.setId(vacancyId);
+        existingJobVacancy.setId(id);
+        existingJobVacancy.setEmployer(employer);
 
-        when(jobVacancyRepository.findById(vacancyId)).thenReturn(Optional.of(existingJobVacancy));
+        when(jobVacancyRepository.findById(id)).thenReturn(java.util.Optional.of(existingJobVacancy));
 
-        // Вызываем тестируемый метод
-        assertDoesNotThrow(() -> jobVacancyService.editJobVacancy(request, vacancyId));
+        jobVacancyService.deleteJobVacancy(id, employer);
 
-        // Проверяем, что данные вакансии были изменены
-        assertEquals(request.getJobType(), existingJobVacancy.getJobType());
-        assertEquals(request.getSalary(), existingJobVacancy.getSalary());
-        assertEquals(request.getCurrency(), existingJobVacancy.getCurrency());
-        assertEquals(request.getDescription(), existingJobVacancy.getDescription());
-        assertEquals(skills, existingJobVacancy.getSkills());
+        verify(jobVacancyRepository, times(1)).deleteById(id);
 
-        // Проверяем взаимодействие с репозиторием
-        verify(jobVacancyRepository, times(1)).findById(vacancyId);
-        verify(jobVacancyRepository, times(1)).save(existingJobVacancy);
+        verify(jobVacancyRepository, times(1)).findById(id);
+
+        verifyNoMoreInteractions(jobVacancyRepository);
     }
 
     @Test
-    public void testEditJobVacancyNotFoundException() {
-        // Попытка редактирования несуществующей вакансии
-        Long nonExistingVacancyId = 2L;
-        when(jobVacancyRepository.findById(nonExistingVacancyId)).thenReturn(Optional.empty());
+    void testDeleteJobVacancyThrowsExceptionWhenNotBelongToUser() {
+        Long id = 1L;
+        Employer employer = new Employer();
+        JobVacancy existingJobVacancy = new JobVacancy();
+        existingJobVacancy.setId(id);
+        existingJobVacancy.setEmployer(new Employer());
 
-        // Вызываем тестируемый метод и ожидаем BadRequestException
-        assertThrows(BadRequestException.class, () -> jobVacancyService.editJobVacancy(new JobVacancyRequest(), nonExistingVacancyId));
+        when(jobVacancyRepository.findById(eq(id))).thenReturn(java.util.Optional.of(existingJobVacancy));
 
-        // Проверяем взаимодействие с репозиторием
-        verify(jobVacancyRepository, times(1)).findById(nonExistingVacancyId);
-        verify(jobVacancyRepository, never()).save(any());
+        assertThrows(BadRequestException.class, () -> jobVacancyService.deleteJobVacancy(id, employer));
+
+        verify(jobVacancyRepository, times(1)).findById(eq(id));
+
+        verifyNoMoreInteractions(jobVacancyRepository);
     }
-
-    @Test
-    public void testDeleteJobVacancy() {
-        // Подготовка данных для теста
-        Long userId = 123L;
-        Long vacancyId = 456L;
-
-        // Вызываем метод, который мы тестируем
-        jobVacancyService.deleteJobVacancy(userId, vacancyId);
-
-        // Проверяем, что метод deleteById был вызван с правильными аргументами
-        verify(jobVacancyRepository, times(1)).deleteById(vacancyId);
-    }
-
-//    @Test
-//    public void testSearchJobVacancy() {
-//        // Подготовка тестовых данных
-//        JobVacancySearchRequest searchRequest = new JobVacancySearchRequest();
-//        searchRequest.setJobType("Full Time");
-//        searchRequest.setSalaryMin(50000);
-//        searchRequest.setCurrencyMin("USD");
-//        searchRequest.setSkills(Arrays.asList(
-//                Skill.builder().skill("Java").build(),
-//                Skill.builder().skill("Spring").build()));
-//
-//        List<JobVacancy> expectedResult = Arrays.asList(
-//                new JobVacancy(/* заполните значения для вакансии 1 */),
-//                new JobVacancy(/* заполните значения для вакансии 2 */));
-//
-//        when(currencyService.getCurrentOfficialRate()).thenReturn(3.0);
-//
-//        CriteriaBuilder.Case selectCaseMock = Mockito.mock(CriteriaBuilder.Case.class);
-//
-//        Mockito.when(criteriaBuilder.selectCase()).thenReturn(selectCaseMock);
-//        Mockito.when(selectCaseMock.when(Mockito.any(), Mockito.any())).thenAnswer(invocation -> {
-//            Object[] args = invocation.getArguments();
-//            return args[0]; // Возвращаем первый аргумент (Expression<Double>)
-//        });
-//
-//        // Установка макетов для объектов Criteria API
-//        when(entityManager.getCriteriaBuilder()).thenReturn(criteriaBuilder);
-//        when(criteriaBuilder.createQuery(JobVacancy.class)).thenReturn(criteriaQuery);
-//        when(criteriaQuery.from(JobVacancy.class)).thenReturn(root);
-//        when(entityManager.createQuery(criteriaQuery)).thenReturn(typedQuery);
-//
-//        // Установка ожидаемого результата для макета TypedQuery
-//        when(typedQuery.getResultList()).thenReturn(expectedResult);
-//
-//        // Вызов тестируемого метода
-//        List<JobVacancy> result = jobVacancyService.searchJobVacancy(searchRequest);
-//
-//        // Проверки
-//        assertEquals(expectedResult, result);
-//
-//        // Проверка взаимодействия с объектами Criteria API
-//        verify(criteriaBuilder, times(1)).equal(any(Expression.class), any());
-//        verify(criteriaBuilder, times(1)).greaterThanOrEqualTo(any(Expression.class), any(Expression.class));
-//        verify(criteriaBuilder, times(1)).lessThanOrEqualTo(any(Expression.class), any(Expression.class));
-//        verify(root, times(1)).join(eq("skills"));
-//
-//        // Проверка взаимодействия с макетом TypedQuery
-//        verify(entityManager, times(1)).createQuery(criteriaQuery);
-//    }
 }

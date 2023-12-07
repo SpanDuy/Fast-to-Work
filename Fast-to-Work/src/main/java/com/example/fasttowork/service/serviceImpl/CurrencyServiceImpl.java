@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,25 +17,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Service
+@RequiredArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
 
     private final RestTemplate restTemplate;
-
-    public CurrencyServiceImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    @Value("${nbrbUSD.api.url}")
+    private String nbrbUSDApiUrl;
 
     @Override
     public CurrencyFromNBRB getCurrencyFromNBRB() {
         try {
-            String currencyCode = "USD";
-            String url = "https://www.nbrb.by/api/exrates/rates/" + currencyCode + "?parammode=2";
-            String jsonString = restTemplate.getForObject(url, String.class);
+            String jsonString = restTemplate.getForObject(nbrbUSDApiUrl, String.class);
+
+            if (jsonString == null) {
+                throw new RuntimeException("Received null response from the API");
+            }
+
             ObjectMapper objectMapper = new ObjectMapper();
-
-            CurrencyFromNBRB currency = objectMapper.readValue(jsonString, CurrencyFromNBRB.class);
-
-            return currency;
+            return objectMapper.readValue(jsonString, CurrencyFromNBRB.class);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,6 +45,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public Double convertFromBYNToUSD(Double currency) {
-        return currency / getCurrencyFromNBRB().getCurOfficialRate();
+        Double curRate = getCurrencyFromNBRB().getCurOfficialRate();
+        return currency / curRate;
     }
 }

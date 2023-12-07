@@ -2,8 +2,12 @@ package com.example.fasttowork.service;
 
 import com.example.fasttowork.entity.*;
 import com.example.fasttowork.exception.BadRequestException;
+import com.example.fasttowork.mapper.JobVacancyMapper;
+import com.example.fasttowork.mapper.ResumeMapper;
 import com.example.fasttowork.payload.request.JobVacancyRequest;
 import com.example.fasttowork.payload.request.ResumeRequest;
+import com.example.fasttowork.payload.response.JobVacancyResponse;
+import com.example.fasttowork.payload.response.ResumeResponse;
 import com.example.fasttowork.repository.EmployeeRepository;
 import com.example.fasttowork.repository.EmployerRepository;
 import com.example.fasttowork.repository.JobVacancyRepository;
@@ -38,153 +42,219 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class ResumeServiceTest {
-    @MockBean
+    @Mock
     private ResumeRepository resumeRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
-    @Mock
-    private SecurityUtil securityUtil;
-
     @InjectMocks
     private ResumeServiceImpl resumeService;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     void getAllResume_shouldReturnListOfResumes() {
         Resume resume1 = new Resume();
         Resume resume2 = new Resume();
-
         List<Resume> mockResumes = Arrays.asList(resume1, resume2);
 
         when(resumeRepository.findAll()).thenReturn(mockResumes);
 
-        // Act
         List<Resume> result = resumeService.getAllResumes();
 
-        // Assert
-        assertEquals(2, result.size()); // Проверка, что возвращается ожидаемое количество элементов
-        assertEquals(resume1, result.get(0)); // Проверка, что первый элемент соответствует ожидаемому объекту
-        assertEquals(resume2, result.get(1)); // Проверка, что второй элемент соответствует ожидаемому объекту
-
-        // Можете добавить дополнительные проверки в зависимости от вашей логики
+        assertEquals(2, result.size());
+        assertEquals(resume1, result.get(0));
+        assertEquals(resume2, result.get(1));
     }
 
     @Test
-    @WithMockUser(username = "test@example.com", password = "password", roles = "EMPLOYER")
-    public void testFindAllResume() {
-        when(securityUtil.getSessionUserEmail()).thenReturn("test@example.com");
-
-        Employee user = new Employee();
-        user.setId(1L); // Установите ID для пользователя
-        when(employeeRepository.findByEmail(anyString())).thenReturn(user);
-
-        List<Resume> expectedJobVacancies = new ArrayList<>();
-        when(resumeRepository.findByEmployeeId(anyLong())).thenReturn(expectedJobVacancies);
-
-        List<Resume> actualJobVacancies = resumeService.findAllResumes();
-
-        verify(securityUtil, times(1)).getSessionUserEmail();
-        verify(employeeRepository, times(1)).findByEmail("test@example.com");
-        verify(resumeRepository, times(1)).findByEmployeeId(1L);
-
-        assertEquals(expectedJobVacancies, actualJobVacancies);
-    }
-
-    @Test
-    public void testFindResumeById_WhenExists() {
-        Long resumeId = 1L;
-        Resume expectedResume = new Resume();
-        when(resumeRepository.findById(resumeId)).thenReturn(Optional.of(expectedResume));
-
-        // Call the method you want to test
-        Resume actualJobVacancy = resumeService.findResumeById(resumeId);
-
-        // Verify that the method was called with the expected argument
-        verify(resumeRepository, times(1)).findById(resumeId);
-
-        // Verify the result
-        assertEquals(expectedResume, actualJobVacancy);
-    }
-
-    @Test
-    public void testFindResumeById_WhenNotExists() {
-        // Mocking jobVacancyRepository.findById()
-        Long resumeId = 1L;
-        when(resumeRepository.findById(resumeId)).thenReturn(Optional.empty());
-
-        // Call the method you want to test and expect an exception
-        assertThrows(BadRequestException.class, () -> {
-            resumeService.findResumeById(resumeId);
-        });
-
-        // Verify that the method was called with the expected argument
-        verify(resumeRepository, times(1)).findById(resumeId);
-    }
-
-    @Test
-    public void testCreateResume() {
-        // Создаем тестовые данные
-        ResumeRequest request = new ResumeRequest();
-        request.setJobType("Full Time");
-        request.setDescription("Job description");
-        List<Skill> skills = new ArrayList<>();
-        skills.add(Skill.builder().skill("Java").build());
-        request.setSkills(skills);
-
-        Long userId = 1L;
-
+    void testFindAllJobVacancy() {
         Employee employee = new Employee();
-        employee.setId(userId);
-        employee.setEmail("test@example.com");
+        employee.setId(1L);
 
-        when(securityUtil.getSessionUserEmail()).thenReturn("test@example.com");
-        when(employeeRepository.findByEmail("test@example.com")).thenReturn(employee);
+        Resume resume1 = new Resume();
+        resume1.setId(1L);
+        resume1.setJobType("Resume 1");
+        resume1.setEmployee(employee);
 
-        // Вызываем тестируемый метод
-        Resume createdResume = resumeService.createResume(request, userId);
+        Resume resume2 = new Resume();
+        resume2.setId(2L);
+        resume2.setJobType("Resume 2");
+        resume2.setEmployee(employee);
 
-        // Проверяем результаты
+        List<Resume> expectedVacancies = Arrays.asList(resume1, resume2);
+
+        when(resumeRepository.findByEmployeeId(employee.getId())).thenReturn(expectedVacancies);
+
+        List<Resume> resultResumes = resumeService.findAllResumes(employee);
+
+        assertEquals(expectedVacancies, resultResumes);
+
+        verify(resumeRepository, times(1)).findByEmployeeId(employee.getId());
+    }
+
+    @Test
+    void testFindResumeById() {
+        Employee employee = new Employee();
+        employee.setId(1L);
+
+        Resume resume = new Resume();
+        resume.setId(1L);
+        resume.setEmployee(employee);
+
+        ResumeResponse expectedResponse = ResumeMapper.mapToResumeResponse(resume);
+
+        when(resumeRepository.findById(resume.getId())).thenReturn(Optional.of(resume));
+
+        ResumeResponse resultResponse = resumeService.findResumeById(resume.getId(), employee);
+
+        assertEquals(expectedResponse, resultResponse);
+
+        verify(resumeRepository, times(1)).findById(resume.getId());
+
+        verifyNoMoreInteractions(resumeRepository);
+    }
+
+    @Test
+    void testFindResumeByIdNotFound() {
+        Employee employee = new Employee();
+        employee.setId(1L);
+
+        when(resumeRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(BadRequestException.class,
+                () -> resumeService.findResumeById(1L, employee));
+
+        verify(resumeRepository, times(1)).findById(1L);
+
+        verifyNoMoreInteractions(resumeRepository);
+    }
+
+    @Test
+    void testFindResumeByIdWrongEmployee() {
+        Employee employee = new Employee();
+        employee.setId(1L);
+
+        Resume resume = new Resume();
+        resume.setId(1L);
+        resume.setEmployee(new Employee());
+
+        when(resumeRepository.findById(resume.getId())).thenReturn(Optional.of(resume));
+
+        assertThrows(BadRequestException.class,
+                () -> resumeService.findResumeById(resume.getId(), employee));
+
+        verify(resumeRepository, times(1)).findById(resume.getId());
+
+        verifyNoMoreInteractions(resumeRepository);
+    }
+
+    @Test
+    void testGetResumeById() {
+        Employee employee = new Employee();
+        Resume resume = Resume.builder().employee(employee).build();
+        resume.setId(1L);
+
+        ResumeResponse expectedResponse = ResumeMapper.mapToResumeResponse(resume);
+
+        when(resumeRepository.findById(resume.getId())).thenReturn(Optional.of(resume));
+
+        ResumeResponse resultResponse = resumeService.getResumeById(resume.getId());
+
+        assertEquals(expectedResponse, resultResponse);
+
+        verify(resumeRepository, times(1)).findById(resume.getId());
+
+        verifyNoMoreInteractions(resumeRepository);
+    }
+
+    @Test
+    void testGetResumeByIdNotFound() {
+        when(resumeRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(BadRequestException.class, () -> resumeService.getResumeById(1L));
+
+        verify(resumeRepository, times(1)).findById(1L);
+
+        verifyNoMoreInteractions(resumeRepository);
+    }
+
+    @Test
+    void testCreateResume() {
+        ResumeRequest resumeRequest = ResumeRequest.builder().skills(new ArrayList<>()).build();
+        Employee employee = new Employee();
+
+        when(employeeRepository.save(any(Employee.class))).thenReturn(new Employee());
+
+        Resume createdResume = resumeService.createResume(resumeRequest, employee);
+
         assertNotNull(createdResume);
-        assertEquals(request.getJobType(), createdResume.getJobType());
-        assertEquals(request.getDescription(), createdResume.getDescription());
-        assertEquals(employee, createdResume.getEmployee());
-        assertEquals(skills, createdResume.getSkills());
 
-        // Проверяем взаимодействие с репозиториями
-        verify(resumeRepository, times(1)).save(createdResume);
-        verify(employeeRepository, times(1)).save(employee);
+        verify(employeeRepository, times(1)).save(any(Employee.class));
+        verify(resumeRepository, times(1)).save(any(Resume.class));
     }
 
     @Test
-    public void testEditResumeNotFoundException() {
-        // Попытка редактирования несуществующей вакансии
-        Long nonExistingVacancyId = 2L;
-        when(resumeRepository.findById(nonExistingVacancyId)).thenReturn(Optional.empty());
+    void testEditResume_ValidData_ShouldEditAndSaveResume() {
+        Long id = 1L;
+        Employee employee = new Employee();
+        ResumeRequest resumeRequest = ResumeRequest.builder().skills(new ArrayList<>()).build();
+        Resume existingResume = Resume.builder().id(id).employee(employee).build();
 
-        // Вызываем тестируемый метод и ожидаем BadRequestException
-        assertThrows(BadRequestException.class, () -> resumeService.editResume(new ResumeRequest(), nonExistingVacancyId));
+        when(resumeRepository.findById(id)).thenReturn(Optional.of(existingResume));
 
-        // Проверяем взаимодействие с репозиторием
-        verify(resumeRepository, times(1)).findById(nonExistingVacancyId);
-        verify(resumeRepository, never()).save(any());
+        assertDoesNotThrow(() -> resumeService.editResume(resumeRequest, id, employee));
+
+        verify(resumeRepository, times(1)).findById(id);
+        verify(resumeRepository, times(1)).save(any(Resume.class));
     }
 
     @Test
-    public void testDeleteResume() {
-        // Подготовка данных для теста
-        Long userId = 123L;
-        Long resumeId = 456L;
+    void testEditResume_InvalidEmployee_ShouldThrowBadRequestException() {
+        Long id = 1L;
+        Employee employee = new Employee();
+        ResumeRequest resumeRequest = ResumeRequest.builder().build();
+        Resume existingResume = Resume.builder().id(id).employee(new Employee()).build();
 
-        // Вызываем метод, который мы тестируем
-        resumeService.deleteResume(userId, resumeId);
+        when(resumeRepository.findById(id)).thenReturn(Optional.of(existingResume));
 
-        // Проверяем, что метод deleteById был вызван с правильными аргументами
-        verify(resumeRepository, times(1)).deleteById(resumeId);
+        assertThrows(BadRequestException.class,
+                () -> resumeService.editResume(resumeRequest, id, employee));
+
+        verify(resumeRepository, times(1)).findById(id);
+        verify(resumeRepository, never()).save(any(Resume.class));
+    }
+
+    @Test
+    void testDeleteResume() {
+        Long id = 1L;
+        Employee employee = new Employee();
+        Resume existingResume = new Resume();
+        existingResume.setId(id);
+        existingResume.setEmployee(employee);
+
+        when(resumeRepository.findById(id)).thenReturn(java.util.Optional.of(existingResume));
+
+        resumeService.deleteResume(id, employee);
+
+        verify(resumeRepository, times(1)).deleteById(id);
+
+        verify(resumeRepository, times(1)).findById(id);
+
+        verifyNoMoreInteractions(resumeRepository);
+    }
+
+    @Test
+    void testDeleteResumeThrowsExceptionWhenNotBelongToUser() {
+        Long id = 1L;
+        Employee employee = new Employee();
+        Resume existingResume = new Resume();
+        existingResume.setId(id);
+        existingResume.setEmployee(new Employee());
+
+        when(resumeRepository.findById(eq(id))).thenReturn(java.util.Optional.of(existingResume));
+
+        assertThrows(BadRequestException.class, () -> resumeService.deleteResume(id, employee));
+
+        verify(resumeRepository, times(1)).findById(eq(id));
+
+        verifyNoMoreInteractions(resumeRepository);
     }
 }

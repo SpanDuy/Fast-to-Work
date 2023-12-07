@@ -35,16 +35,12 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
     @Override
     public List<JobVacancy> getAllJobVacancy() {
-        List<JobVacancy> jobVacancies = jobVacancyRepository.findAll();
-
-        return jobVacancies;
+        return jobVacancyRepository.findAll();
     }
 
     @Override
     public List<JobVacancy> findAllJobVacancy(Employer employer) {
-        List<JobVacancy> jobVacancies = jobVacancyRepository.findByEmployerId(employer.getId());
-
-        return jobVacancies;
+        return jobVacancyRepository.findByEmployerId(employer.getId());
     }
 
 
@@ -90,6 +86,7 @@ public class JobVacancyServiceImpl implements JobVacancyService {
             throw new BadRequestException("RESUME_DOES_NOT_BELONG_TO_USER");
         }
 
+        jobVacancyRequest.setId(jobVacancy.getId());
         jobVacancy = JobVacancyMapper.mapToJobVacancy(jobVacancyRequest);
         jobVacancy.setEmployer(employer);
 
@@ -131,18 +128,22 @@ public class JobVacancyServiceImpl implements JobVacancyService {
 
         if (jobVacancySearchRequest.getSalaryMin() != null) {
             if (!jobVacancySearchRequest.getCurrencyMin().equals("USD")) {
-                jobVacancySearchRequest.setSalaryMin(currencyService.convertFromBYNToUSD(jobVacancySearchRequest.getSalaryMin()));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(addAdjustedSalary(criteriaBuilder, root),
+                        currencyService.convertFromBYNToUSD(jobVacancySearchRequest.getSalaryMin())));
+            } else {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(addAdjustedSalary(criteriaBuilder, root),
+                        jobVacancySearchRequest.getSalaryMin()));
             }
-
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(addAdjustedSalary(criteriaBuilder, root), jobVacancySearchRequest.getSalaryMin()));
         }
 
         if (jobVacancySearchRequest.getSalaryMax() != null) {
             if (!jobVacancySearchRequest.getCurrencyMax().equals("USD")) {
-                jobVacancySearchRequest.setSalaryMax(currencyService.convertFromBYNToUSD(jobVacancySearchRequest.getSalaryMax()));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(addAdjustedSalary(criteriaBuilder, root),
+                        currencyService.convertFromBYNToUSD(jobVacancySearchRequest.getSalaryMax())));
+            } else {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(addAdjustedSalary(criteriaBuilder, root),
+                        jobVacancySearchRequest.getSalaryMax()));
             }
-
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(addAdjustedSalary(criteriaBuilder, root), jobVacancySearchRequest.getSalaryMax()));
         }
 
         if (jobVacancySearchRequest.getSkills() != null && !jobVacancySearchRequest.getNotEmptySkills().isEmpty()) {
